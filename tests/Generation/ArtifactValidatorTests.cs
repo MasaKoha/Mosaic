@@ -166,6 +166,19 @@ public sealed class ArtifactValidatorTests : IDisposable
         Assert.Contains("future_rule", exception.Message);
     }
 
+    /// <summary>改善では仕様の変更を許すが、未知の企画項目の消失は検出する。</summary>
+    [Fact]
+    public async Task RefinementCannotDiscardUnknownBaselineFields()
+    {
+        var baseline = CreateResolved();
+        baseline.Values["future_rule"] = "残すルール";
+        await store.SaveAsync(Path.Combine(directory, "baseline-resolved-brief.json"), CreateResolved(), CancellationToken.None);
+        await WriteResolvedAsync(CreateResolved());
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            new ArtifactValidator(catalog, store).ValidateRefinementAsync(directory, baseline, CancellationToken.None));
+        Assert.Contains("future_rule", exception.Message);
+    }
+
     /// <summary>テストで作成した専用ディレクトリだけを破棄する。</summary>
     public void Dispose()
     {

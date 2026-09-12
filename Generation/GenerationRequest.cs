@@ -1,5 +1,6 @@
 using System;
 using GameMockStudio.Brief;
+using GameMockStudio.Generation.Refinement;
 
 namespace GameMockStudio.Generation;
 
@@ -17,6 +18,8 @@ public sealed record GenerationRequest
     public required string Executable { get; init; }
     /// <summary>生成ごとの子フォルダを作る親ディレクトリ。</summary>
     public required string OutputRoot { get; init; }
+    /// <summary>既存ゲームの改善時にだけ指定する起点と感想。</summary>
+    public RefinementRequest? Refinement { get; init; }
     /// <summary>CLIの起動から終了までを許容する時間。0以下や無期限は指定できない。</summary>
     public TimeSpan ExecutionTimeout { get; init; } = DefaultExecutionTimeout;
 }

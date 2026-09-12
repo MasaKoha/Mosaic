@@ -25,12 +25,34 @@
           <ListBox x:Name="CategoryList" Grid.Row="2" Background="Transparent" BorderThickness="0" />
         </Grid>
       </Border>
-      <Grid Grid.Column="2" RowDefinitions="Auto,*">
-        <TextBox x:Name="SearchBox" PlaceholderText="項目を検索  —  世界観、カメラ、難易度…" Margin="0,0,0,14" />
-        <ScrollViewer x:Name="EditorScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
-          <StackPanel x:Name="EditorHost" Spacing="12" Margin="0,0,8,0" />
-        </ScrollViewer>
-      </Grid>
+      <TabControl x:Name="EditorTabs" Grid.Column="2">
+        <TabItem Header="企画をつくる">
+          <Grid RowDefinitions="Auto,*" Margin="0,12,0,0">
+            <TextBox x:Name="SearchBox" PlaceholderText="項目を検索  —  世界観、カメラ、難易度…" Margin="0,0,0,14" />
+            <ScrollViewer x:Name="EditorScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+              <StackPanel x:Name="EditorHost" Spacing="12" Margin="0,0,8,0" />
+            </ScrollViewer>
+          </Grid>
+        </TabItem>
+        <TabItem Header="ゲームの感想">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="16" Margin="0,16,8,0">
+              <TextBlock Text="遊んだ感想から、もう一歩。" FontSize="22" FontWeight="SemiBold" />
+              <TextBlock Classes="muted" Text="右の生成履歴でゲームを選び、よかった点や変えたい点を書いてください。元のゲームを残して改善版を作ります。" TextWrapping="Wrap" />
+              <Border Classes="card" Padding="14">
+                <TextBlock x:Name="FeedbackTargetText" TextWrapping="Wrap" />
+              </Border>
+              <TextBlock Text="遊んだ感想・改善要望" FontWeight="SemiBold" />
+              <TextBox x:Name="FeedbackBox" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="260"
+                       AutomationProperties.Name="遊んだ感想・改善要望"
+                       PlaceholderText="例: 操作は気持ちよかった。序盤が難しいので最初は少しゆっくりにしてほしい。クリア時の達成感を強くしたい。"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto" />
+              <TextBlock Classes="muted" Text="感想はゲームごとに自動保存します。今回の要望を優先し、関係のない仕様は引き継ぎます。生成形式は選択したゲームと同じです。" TextWrapping="Wrap" />
+              <TextBlock x:Name="AppliedFeedbackText" Classes="muted" TextWrapping="Wrap" IsVisible="False" />
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+      </TabControl>
       <Border Grid.Column="4" Classes="card" Padding="18">
         <Grid RowDefinitions="*,Auto">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
@@ -39,7 +61,7 @@
             <TextBlock Classes="caption" Text="02  /  モックを生成" />
             <TextBlock Text="Codex GPT-6  ·  xhigh" FontSize="20" FontWeight="SemiBold" />
             <TextBlock Classes="muted" Text="このPCのログイン済みCodex CLIで生成します。認証情報はアプリに保存しません。生成にはネット接続を使用します。" TextWrapping="Wrap" />
-            <TextBlock Text="生成するゲームの形式" Margin="0,6,0,0" />
+            <TextBlock Text="新規生成するゲームの形式" Margin="0,6,0,0" />
             <ComboBox x:Name="FormatSelector" HorizontalAlignment="Stretch" SelectedIndex="0">
               <ComboBoxItem Content="ブラウザゲーム（HTML）" />
               <ComboBoxItem Content="Unity プロジェクト" />
@@ -57,7 +79,7 @@
                 <TextBlock Classes="muted" Text="モデル: gpt-6-astra / 推論: xhigh" FontSize="11" />
               </StackPanel>
             </Expander>
-            <Expander Header="最近の生成・復旧" HorizontalAlignment="Stretch">
+            <Expander Header="生成履歴・復旧" HorizontalAlignment="Stretch" IsExpanded="True">
               <StackPanel Spacing="8" Margin="0,8,0,0">
                 <ComboBox x:Name="HistorySelector" HorizontalAlignment="Stretch" MaxDropDownHeight="240"
                           PlaceholderText="生成履歴はまだありません" />
@@ -84,6 +106,9 @@
           </ScrollViewer>
           <StackPanel Grid.Row="1" Spacing="10" Margin="0,16,0,0">
             <Button x:Name="GenerateButton" Classes="primary" Content="ゲームモックを生成  →" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" Padding="12,14" />
+            <Button x:Name="RefineButton" Classes="primary" Content="この感想でブラッシュアップ  →"
+                    IsVisible="False" IsEnabled="False" HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center" Padding="12,14" />
             <Button x:Name="CancelButton" Content="生成をキャンセル" IsVisible="False" HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center" />

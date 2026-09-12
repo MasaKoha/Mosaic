@@ -22,5 +22,7 @@ public enum WorkspaceAction
     /// <summary>自動退避した企画の保存先を開く。</summary>
     OpenRecovery,
     /// <summary>ブラウザゲームを開く。</summary>
-    Play
+    Play,
+    /// <summary>選択したゲームを感想に沿って改善する。</summary>
+    Refine
 }

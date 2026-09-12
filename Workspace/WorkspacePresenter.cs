@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using GameMockStudio.Brief;
 using GameMockStudio.Generation;
 using GameMockStudio.Generation.History;
+using GameMockStudio.Generation.Refinement;
 using GameMockStudio.Storage;
 
 namespace GameMockStudio.Workspace;
@@ -33,6 +34,7 @@ public sealed class WorkspacePresenter : IDisposable
     private string outputDirectory = string.Empty;
     private MockFormat generatedFormat;
     private GenerationHistoryEntry? activeGeneration;
+    private RefinementRequest? activeRefinement;
 
     /// <summary>画面の表示責務とファイル・生成の処理を接続する。</summary>
     public WorkspacePresenter(WorkspaceView view, WorkspaceFiles files, PromptComposer composer,
@@ -61,9 +63,25 @@ public sealed class WorkspacePresenter : IDisposable
         }
         view.ShowHistory(history.Entries);
         ShowSelectedOutput();
-        subscriptions.Add(history.Changes.Subscribe(_ => view.ShowHistory(history.Entries)));
-        subscriptions.Add(view.HistorySelection.Subscribe(_ => ShowSelectedOutput()));
-        subscriptions.Add(view.Changes.Throttle(PreviewDelay).ObserveOn(userInterface)
+        SetEvent();
+        RefreshPrompt();
+    }
+
+    private void SetEvent()
+    {
+        subscriptions.Add(history.Changes.Subscribe(_ =>
+        {
+            view.ShowHistory(history.Entries);
+            ShowSelectedOutput();
+        }));
+        subscriptions.Add(view.HistorySelection.Subscribe(_ =>
+        {
+            ShowSelectedOutput();
+            RefreshPrompt();
+        }));
+        subscriptions.Add(view.FeedbackEditor.Changes.Subscribe(_ => SaveFeedback()));
+        subscriptions.Add(view.FeedbackEditor.ModeChanges.Subscribe(_ => RefreshPrompt()));
+        subscriptions.Add(view.Changes.Merge(view.FeedbackEditor.Changes).Throttle(PreviewDelay).ObserveOn(userInterface)
             .Subscribe(_ => RefreshPrompt(), ShowFailure));
         subscriptions.Add(view.Commands.Where(action => action == WorkspaceAction.Cancel)
             .Subscribe(_ => CancelGeneration()));
@@ -76,7 +94,6 @@ public sealed class WorkspacePresenter : IDisposable
                     return Observable.Empty<Unit>();
                 }))
             .Concat().Subscribe());
-        RefreshPrompt();
     }
 
     /// <summary>生成を停止し、最後のキー入力を保存してから終了を許可する。</summary>
@@ -151,7 +168,19 @@ public sealed class WorkspacePresenter : IDisposable
                 }
                 break;
             case WorkspaceAction.Generate:
-                StartGeneration();
+                StartGeneration(null);
+                break;
+            case WorkspaceAction.Refine:
+                var selected = SelectedHistory();
+                if (selected is not { Outcome: GenerationOutcome.Completed })
+                {
+                    throw new InvalidOperationException("生成完了したゲームを履歴から選んでください。");
+                }
+                StartGeneration(new RefinementRequest
+                {
+                    SourceDirectory = selected.OutputDirectory,
+                    Feedback = view.FeedbackEditor.Feedback
+                });
                 break;
             case WorkspaceAction.OpenOutput:
                 files.Open(outputDirectory);
@@ -195,26 +224,30 @@ public sealed class WorkspacePresenter : IDisposable
         }
     }
 
-    private void StartGeneration()
+    private void StartGeneration(RefinementRequest? refinement)
     {
         if (string.IsNullOrWhiteSpace(view.Executable) || !Path.IsPathFullyQualified(view.OutputRoot))
         {
             throw new InvalidOperationException("Codex実行ファイルと、絶対パスの出力先を指定してください。");
         }
-        var brief = view.CaptureBrief();
-        var prompt = composer.Compose(brief, variationIdentifier);
+        refinement?.Validate();
+        var brief = refinement is null ? view.CaptureBrief() : new BriefDocument { Format = SelectedHistory()!.Format };
+        var prompt = refinement is null ? composer.Compose(brief, variationIdentifier)
+            : composer.ComposeRefinement(brief.Format, refinement.Feedback, variationIdentifier);
         view.ShowPrompt(prompt);
         var request = new GenerationRequest
         {
             Brief = brief,
             Prompt = prompt,
             Executable = view.Executable,
-            OutputRoot = view.OutputRoot
+            OutputRoot = view.OutputRoot,
+            Refinement = refinement
         };
         state = WorkspaceState.Generating;
         generatedFormat = brief.Format;
         outputDirectory = string.Empty;
         activeGeneration = null;
+        activeRefinement = refinement;
         view.BeginGeneration();
         view.ShowStatus($"Codex GPT-6 {CodexCommand.ReasoningEffort}で生成中。完了まで数分かかる場合があります。");
         generation.Disposable = runner.Run(request).SubscribeOn(TaskPoolScheduler.Default)
@@ -231,9 +264,13 @@ public sealed class WorkspacePresenter : IDisposable
                 StartedAt = DateTimeOffset.Now,
                 OutputDirectory = outputDirectory,
                 Format = generatedFormat,
-                Outcome = GenerationOutcome.Running
+                Outcome = GenerationOutcome.Running,
+                SourceDirectory = activeRefinement?.SourceDirectory ?? string.Empty,
+                AppliedFeedback = activeRefinement?.Feedback ?? string.Empty
             };
             history.Record(activeGeneration);
+            view.SelectLatestHistory();
+            ShowSelectedOutput();
         }
         view.ShowOutputPath(outputDirectory);
         view.AppendLog(update.Message);
@@ -277,6 +314,18 @@ public sealed class WorkspacePresenter : IDisposable
 
     private void RefreshPrompt()
     {
+        if (state != WorkspaceState.Editing)
+        {
+            return;
+        }
+        var selected = SelectedHistory();
+        if (view.FeedbackEditor.IsRefining)
+        {
+            var prompt = selected is null ? "改善するゲームを生成履歴から選んでください。"
+                : composer.ComposeRefinement(selected.Format, view.FeedbackEditor.Feedback, variationIdentifier);
+            view.ShowPrompt(prompt);
+            return;
+        }
         view.ShowPrompt(composer.Compose(view.CaptureBrief(), variationIdentifier));
     }
 
@@ -298,12 +347,12 @@ public sealed class WorkspacePresenter : IDisposable
 
     private void ShowSelectedOutput()
     {
-        var selectedIndex = view.SelectedHistoryIndex;
-        if (selectedIndex < 0 || selectedIndex >= history.Entries.Count)
+        var selected = SelectedHistory();
+        view.FeedbackEditor.ShowTarget(selected);
+        if (selected is null)
         {
             return;
         }
-        var selected = history.Entries[selectedIndex];
         outputDirectory = selected.OutputDirectory;
         view.ShowOutputPath(outputDirectory);
         var completed = selected.Outcome == GenerationOutcome.Completed;
@@ -317,5 +366,20 @@ public sealed class WorkspacePresenter : IDisposable
             availability |= OutputAvailability.UseResolved;
         }
         view.SetOutputAvailability(availability);
+    }
+
+    private GenerationHistoryEntry? SelectedHistory()
+    {
+        var selectedIndex = view.SelectedHistoryIndex;
+        return selectedIndex >= 0 && selectedIndex < history.Entries.Count ? history.Entries[selectedIndex] : null;
+    }
+
+    private void SaveFeedback()
+    {
+        var selected = SelectedHistory();
+        if (selected is not null && state == WorkspaceState.Editing)
+        {
+            history.UpdateFeedback(selected.OutputDirectory, view.FeedbackEditor.Feedback);
+        }
     }
 }
