@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="GameMockStudio.Workspace.WorkspaceWindow"
+        Title="Game Mock Studio" Width="1440" Height="940" MinWidth="1140" MinHeight="720">
+  <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,0,0,20">
+      <StackPanel Spacing="5">
+        <TextBlock Classes="caption" Text="GAME MOCK STUDIO  /  IDEA TO PLAY" />
+        <TextBlock Text="思いついたところから、ゲームに。" FontSize="25" FontWeight="SemiBold" />
+        <TextBlock Classes="muted" Text="決めたい要素だけ入力。空欄はAIがランダムに決定します。「なし」は不採用の指定です。" />
+      </StackPanel>
+      <TextBlock x:Name="SaveStatusText" Grid.Row="1" Grid.ColumnSpan="2" Classes="muted" Margin="0,8,0,0"
+                 Text="前回の入力を確認しています…" />
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <Button x:Name="NewButton" Content="新しい企画" />
+        <Button x:Name="LoadButton" Content="企画を開く" />
+        <Button x:Name="SaveButton" Content="企画を保存" />
+      </StackPanel>
+    </Grid>
+    <Grid Grid.Row="1" ColumnDefinitions="218,18,*,18,350">
+      <Border Classes="card" Padding="12">
+        <Grid RowDefinitions="Auto,Auto,*">
+          <TextBlock Classes="caption" Margin="8,4,0,8" Text="01  /  ゲームの設計" />
+          <TextBlock x:Name="CompletionText" Grid.Row="1" Margin="8,0,0,14" Classes="muted" TextWrapping="Wrap" />
+          <ListBox x:Name="CategoryList" Grid.Row="2" Background="Transparent" BorderThickness="0" />
+        </Grid>
+      </Border>
+      <Grid Grid.Column="2" RowDefinitions="Auto,*">
+        <TextBox x:Name="SearchBox" PlaceholderText="項目を検索  —  世界観、カメラ、難易度…" Margin="0,0,0,14" />
+        <ScrollViewer x:Name="EditorScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel x:Name="EditorHost" Spacing="12" Margin="0,0,8,0" />
+        </ScrollViewer>
+      </Grid>
+      <Border Grid.Column="4" Classes="card" Padding="18">
+        <Grid RowDefinitions="*,Auto">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+          <StackPanel x:Name="ConfigurationPanel" Spacing="10">
+            <TextBlock Classes="caption" Text="02  /  モックを生成" />
+            <TextBlock Text="Codex GPT-6  ·  high" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Classes="muted" Text="ローカルCLIから、ログイン済みのCodexへ依頼します。生成にはネット接続を使用します。" TextWrapping="Wrap" />
+            <TextBlock Text="生成するゲームの形式" Margin="0,6,0,0" />
+            <ComboBox x:Name="FormatSelector" HorizontalAlignment="Stretch" SelectedIndex="0">
+              <ComboBoxItem Content="ブラウザゲーム（HTML）" />
+              <ComboBoxItem Content="Unity プロジェクト" />
+              <ComboBoxItem Content="Avalonia プロジェクト" />
+            </ComboBox>
+            <TextBlock Text="出力先" />
+            <Grid ColumnDefinitions="*,Auto">
+              <TextBox x:Name="OutputRootBox" PlaceholderText="絶対パス" />
+              <Button x:Name="ChooseOutputButton" Grid.Column="1" Content="選択" Margin="6,0,0,0" />
+            </Grid>
+            <Expander Header="Codexの接続設定" HorizontalAlignment="Stretch">
+              <StackPanel Spacing="6" Margin="0,8,0,0">
+                <TextBlock Classes="muted" Text="CLI実行ファイルのパス" />
+                <TextBox x:Name="ExecutableBox" PlaceholderText="codex" />
+                <TextBlock Classes="muted" Text="モデル: gpt-6-astra / 推論: high" FontSize="11" />
+              </StackPanel>
+            </Expander>
+            <Expander Header="最近の生成・復旧" HorizontalAlignment="Stretch">
+              <StackPanel Spacing="8" Margin="0,8,0,0">
+                <ComboBox x:Name="HistorySelector" HorizontalAlignment="Stretch" MaxDropDownHeight="240"
+                          PlaceholderText="生成履歴はまだありません" />
+                <Button x:Name="UseResolvedButton" Content="補完済み企画で編集する" IsEnabled="False"
+                        HorizontalAlignment="Stretch" />
+                <Button x:Name="OpenRecoveryButton" Content="退避した企画を探す" HorizontalAlignment="Stretch" />
+              </StackPanel>
+            </Expander>
+          </StackPanel>
+          <TextBlock Classes="caption" Text="03  /  確認と進行" Margin="0,20,0,10" />
+          <TabControl x:Name="OutputTabs" Height="250">
+            <TabItem Header="生成指示">
+              <TextBox x:Name="PromptBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                       FontSize="11" BorderThickness="0" Background="Transparent"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </TabItem>
+            <TabItem Header="実行ログ">
+              <TextBox x:Name="LogBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                       FontSize="11" BorderThickness="0" Background="Transparent"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto" />
+            </TabItem>
+          </TabControl>
+            </StackPanel>
+          </ScrollViewer>
+          <StackPanel Grid.Row="1" Spacing="10" Margin="0,16,0,0">
+            <Button x:Name="GenerateButton" Classes="primary" Content="ゲームモックを生成  →" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" Padding="12,14" />
+            <Button x:Name="CancelButton" Content="生成をキャンセル" IsVisible="False" HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center" />
+            <Grid ColumnDefinitions="*,*">
+              <Button x:Name="OpenOutputButton" Content="成果物フォルダ" IsEnabled="False" HorizontalAlignment="Stretch" />
+              <Button x:Name="PlayButton" Grid.Column="1" Content="ゲームを開く" IsEnabled="False"
+                      HorizontalAlignment="Stretch" Margin="6,0,0,0" />
+            </Grid>
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+    <Grid Grid.Row="2" RowDefinitions="Auto,Auto" Margin="0,16,0,0">
+      <TextBlock x:Name="StatusText" Text="準備完了。すべて空欄でも生成できます。" TextWrapping="Wrap" />
+      <TextBlock x:Name="OutputPathText" Grid.Row="1" Classes="muted" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0" />
+    </Grid>
+  </Grid>
+</Window>

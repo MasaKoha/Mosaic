@@ -1,0 +1,11 @@
+bin/
+obj/
+.idea/
+*.user
+generated/
+artifacts/
+.DS_Store
+.env
+.env.*
+*.secret.*
+.claude/settings.local.json
