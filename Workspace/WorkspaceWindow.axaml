@@ -37,8 +37,8 @@
             <StackPanel>
           <StackPanel x:Name="ConfigurationPanel" Spacing="10">
             <TextBlock Classes="caption" Text="02  /  モックを生成" />
-            <TextBlock Text="Codex GPT-6  ·  high" FontSize="20" FontWeight="SemiBold" />
-            <TextBlock Classes="muted" Text="ローカルCLIから、ログイン済みのCodexへ依頼します。生成にはネット接続を使用します。" TextWrapping="Wrap" />
+            <TextBlock Text="Codex GPT-6  ·  xhigh" FontSize="20" FontWeight="SemiBold" />
+            <TextBlock Classes="muted" Text="このPCのログイン済みCodex CLIで生成します。認証情報はアプリに保存しません。生成にはネット接続を使用します。" TextWrapping="Wrap" />
             <TextBlock Text="生成するゲームの形式" Margin="0,6,0,0" />
             <ComboBox x:Name="FormatSelector" HorizontalAlignment="Stretch" SelectedIndex="0">
               <ComboBoxItem Content="ブラウザゲーム（HTML）" />
@@ -54,7 +54,7 @@
               <StackPanel Spacing="6" Margin="0,8,0,0">
                 <TextBlock Classes="muted" Text="CLI実行ファイルのパス" />
                 <TextBox x:Name="ExecutableBox" PlaceholderText="codex" />
-                <TextBlock Classes="muted" Text="モデル: gpt-6-astra / 推論: high" FontSize="11" />
+                <TextBlock Classes="muted" Text="モデル: gpt-6-astra / 推論: xhigh" FontSize="11" />
               </StackPanel>
             </Expander>
             <Expander Header="最近の生成・復旧" HorizontalAlignment="Stretch">

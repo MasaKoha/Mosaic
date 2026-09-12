@@ -10,11 +10,11 @@
 - 最近20件の生成履歴、補完済み企画の取り込み、接続設定・出力先の永続化。
 - 生成指示のプレビュー、Codexの進行ログ、キャンセル、成果物フォルダを開く。
 - ブラウザゲーム / Unityプロジェクト / Avaloniaプロジェクトを生成。初期選択はブラウザ。
-- ローカルCodex CLIの `gpt-6-astra` / `model_reasoning_effort="high"` を固定指定。
+- ローカルCodex CLIの `gpt-6-astra` / `model_reasoning_effort="xhigh"` を固定指定。
 
 ## 起動
 
-.NET 8以降のSDK、Codex CLI、Codex CLIへのログインが必要です。GUIアプリとして起動した場合にCLIが見つからなければ、「Codexの接続設定」で実行ファイルの絶対パスを指定します。
+.NET 8以降のSDK、Codex CLI 0.153.2以降、Codex CLIへのログインが必要です。GUIアプリとして起動した場合にCLIが見つからなければ、「Codexの接続設定」で実行ファイルの絶対パスを指定します。
 
 利用者が実行するコマンド:
 
@@ -25,6 +25,8 @@ dotnet run --project GameMockStudio.csproj
 ```
 
 モデル実行はローカルCLI経由でOpenAIへ接続します。オフライン推論ではありません。ログイン情報はCLIの保存済み認証を使用し、アプリは認証ファイルを読み込みません。APIキーの入力欄はありません。
+
+事前にターミナルで `codex login status` を実行し、ChatGPTでログイン済みであることを確認してください。未ログインなら `codex login` でログインします。アプリは `--ignore-user-config` を指定し、CLIの保存済み認証を使いながら、個人の `config.toml` にある接続先・MCP・追加書き込み先の設定を読み込まずに起動します。
 
 実装状況は [STATUS](docs/STATUS.md)、確認結果は [検証記録](docs/verification.md) を参照してください。
 
@@ -79,7 +81,9 @@ macOSでは `sh tools/package-macos.sh` で `artifacts/Game Mock Studio.app` を
 
 ## 実行境界と失敗
 
-引数には `ProcessStartInfo.ArgumentList`、本文には標準入力を使用します。シェルコマンドへ企画を埋め込みません。`workspace-write` を明示し、承認が必要な処理は非対話実行では拒否します。サンドボックスを解除するフラグは使いません。組織の管理設定がさらに制限する場合は、その設定が優先されます。
+引数には `ProcessStartInfo.ArgumentList`、本文には標準入力を使用します。シェルコマンドへ企画を埋め込みません。`workspace-write` を明示し、承認が必要な処理は非対話実行では拒否します。生成中のシェルのネットワークアクセスを無効にし、環境変数は基本項目だけを引き継ぎ、KEY・SECRET・TOKENを含む変数名の除外も有効にします。モデルとの通信はCodex CLIが担当します。サンドボックスを解除するフラグは使いません。組織の管理設定がさらに制限する場合は、その設定が優先されます。
+
+企画とログの取り扱い、検証範囲、脆弱性の報告先は [SECURITY.md](SECURITY.md) を参照してください。
 
 認証切れ・モデル利用不可・利用量上限・権限制限・CLI不在はログに表示して停止します。別モデルへのフォールバック、自動再試行、Banked resetの使用はしません。上限の復帰時刻がCLIから返れば、実行ログにそのまま残ります。キャンセルとウィンドウ終了ではプロセスツリーを終了し、途中の成果物を残します。CLI実行が20分を超えた場合も停止し、時間切れを表示します。
 
@@ -99,11 +103,16 @@ dotnet test tests/GameMockStudio.Tests.csproj --configuration Release --nologo
 
 生成物、ログ、ビルド成果物、ローカル設定はコミット対象外です。開発時の注意は [CLAUDE.md](CLAUDE.md) を参照してください。
 
+NuGetの直接・間接依存を監査し、CIでは脆弱性の検出と監査情報の取得失敗をエラーにします。GitHub Actionsの参照はコミットSHAで固定し、Dependabotで依存とActionsの更新を確認します。
+
 ## 参照した仕様
 
 - [OpenAI公式：Codexの非対話実行](https://developers.openai.com/codex/noninteractive)
+- [OpenAI公式：Codexの認証](https://learn.chatgpt.com/docs/auth)
+- [OpenAI公式：Codexの設定](https://learn.chatgpt.com/docs/config-file/config-reference)
+- [OpenAI公式：GPT-6 Astra](https://developers.openai.com/api/docs/models/gpt-6-astra)
 - [Avalonia公式：テーマ](https://docs.avaloniaui.net/docs/styling/themes)
-- ローカル `codex exec --help`（0.153.2）とモデルカタログのGPT-6 high対応を確認。
+- ローカル `codex exec --help`（0.153.2）とモデルカタログのGPT-6 xhigh対応を確認。
 - Avalonia 12.1.2、Rx.NET 6.1.0を固定バージョンとして使用。
 
 未実行の受け入れ確認は [確認手順](docs/verification.md) を参照してください。

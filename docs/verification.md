@@ -2,6 +2,18 @@
 
 2026-09-12、macOS arm64 / .NET SDK 10.0.300 / アプリ対象net8.0で確認。
 
+## GPT-6 xhighと公開用保護の確認
+
+- `dotnet test tests/GameMockStudio.Tests.csproj --configuration Release --nologo -v minimal -p:AuditPipeline=true`: **53件成功、失敗0、スキップ0、警告0**。既存のCLI引数境界テストにxhigh・個人設定非読込・権限と環境変数の制限を反映。
+- ローカルの `codex login status` はChatGPTでログイン済み。認証ファイルは読み取らず、アプリの `CodexCommand` / `CodexRunner` から実CLIを起動。
+- 実行セッションの設定で `gpt-6-astra`、`xhigh`、承認拒否、workspace-write、network_access=falseを確認。
+- 確認用に5分へ短縮した実生成は時間切れで停止。接続と設定適用は確認できたが、生成完了とは扱わない。アプリ本体の上限は20分。
+- 確認用コードも既定の20分上限へ合わせて再実行し、**xhighでの実生成1件が成功**。終了コード0、turn.completed、必須成果物、163項目の補完、明示指定の維持、完了レポートの検査をすべて通過。診断ログは空。出力は `artifacts/xhigh-smoke/mock-20260912-125908-f9f33214f0434cee872d90fde7fc1953/`。画面と同じ `CodexCommand` / `CodexRunner` を呼ぶ一時確認コードから実行し、利用者の企画・履歴は変更していない。
+- Macアプリの再生成、実画面のxhigh表示と認証説明を確認。アプリの219ファイルに認証・自動保存・秘密鍵のファイル名候補はなし。
+- 公開履歴の64テキストblobと作業ツリーに、既知の秘密値形式の検出なし。生成物・認証・復旧データなど12パターンを `git check-ignore` で確認。
+- NuGetの直接・間接依存の監査に成功し、既知の脆弱性は検出なし。CI用のNU1900〜NU1905のエラー化を実効プロパティで確認。
+- GitHubのSecret scanning・push protection・Dependabot alerts/security updates・非公開脆弱性報告を有効化済み。確認時点のアラートは0件。これは将来の検出や未知の問題がないことを保証しない。
+
 ## 実行結果
 
 - `dotnet test tests/GameMockStudio.Tests.csproj --nologo -v minimal`: **53件成功、失敗0、スキップ0、警告0**。
@@ -41,7 +53,7 @@
 |安全な画面置換|入力後に新規・読込|元の入力がRecoveryに保存される|
 |CLI不在|存在しないCLIパスで生成|エラー表示、再編集可能、再試行しない|
 |認証・利用上限|CLIが認証・上限エラーを返す状態|ログが残り、成功扱いにしない、リセットしない|
-|モデルと権限|プロセス引数を確認|gpt-6-astra、high、workspace-write、approval_policy=never|
+|モデルと権限|プロセス引数を確認|gpt-6-astra、xhigh、workspace-write、approval_policy=never|
 |正常生成|小さなHTMLゲームを生成|必須ファイルと補完企画の検証後に完了、ブラウザで開ける|
 |指定維持|ジャンルと特徴を指定して生成|補完企画の明示値が入力と一致|
 |成果物不足|CLI終了0でもindex.htmlや補完項目・完了レポートが欠落|生成未完了のエラー、成果物フォルダを開ける|
