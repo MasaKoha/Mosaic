@@ -250,8 +250,9 @@ public sealed class WorkspacePresenter : IDisposable
         activeRefinement = refinement;
         view.BeginGeneration();
         view.ShowStatus($"Codex GPT-6 {CodexCommand.ReasoningEffort}で生成中。完了まで数分かかる場合があります。");
-        generation.Disposable = runner.Run(request).SubscribeOn(TaskPoolScheduler.Default)
-            .ObserveOn(userInterface).Subscribe(ReceiveUpdate, GenerationFailed, GenerationEnded);
+        // ObserveOnの即時エラーが準備通知を追い越すと履歴を失うため、終端も通常通知としてキューへ載せる。
+        generation.Disposable = runner.Run(request).SubscribeOn(TaskPoolScheduler.Default).Materialize()
+            .ObserveOn(userInterface).Dematerialize().Subscribe(ReceiveUpdate, GenerationFailed, GenerationEnded);
     }
 
     private void ReceiveUpdate(GenerationUpdate update)
