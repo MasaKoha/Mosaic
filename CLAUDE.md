@@ -9,7 +9,9 @@ Game Mock Studioのソースリポジトリ。.NET 8 / C# 12 / Avalonia 12 / Rx.
 ## プロジェクト固有の注意
 
 - 画面・Presenter・企画・CLI実行・保存の責務は [README.mdの構成](README.md#構成) に従う。
-- `Brief/field-catalog.json` が画面と生成指示の共通定義。外部JSONの未知キーは破棄しない。
+- `Brief/field-catalog.json` と `Brief/Planning/*-fields.json` が種類ごとの画面・生成指示・検査の共通定義。外部JSONの未知キーは破棄しない。
+- 企画・セッションはVersion 2。Version 1をゲームへ移行し、種類別下書きと旧履歴の感想を保持する。改善は選択履歴のKindとFormatを固定する。
+- サービスとゲーミフィケーションはexperiment.mdも必須。改善前のメモはbaselineへ分離して今回の生成を検査する。
 - 生成の完了判定には必須成果物・明示指定の維持・完了レポートが必要。プレイテスト済みとは表示しない。
 - モデルは `gpt-6-astra` / `xhigh` 固定。既存CLI認証を使用し、認証情報をアプリへ複製しない。
 - `Avalonia.Headless.XUnit` 12.1.2はxunit v3に依存する。xunit v2を混在させない。

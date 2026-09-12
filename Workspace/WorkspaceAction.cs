@@ -21,8 +21,12 @@ public enum WorkspaceAction
     UseResolved,
     /// <summary>自動退避した企画の保存先を開く。</summary>
     OpenRecovery,
-    /// <summary>ブラウザゲームを開く。</summary>
+    /// <summary>ブラウザモックを開く。</summary>
     Play,
-    /// <summary>選択したゲームを感想に沿って改善する。</summary>
-    Refine
+    /// <summary>選択したモックを感想に沿って改善する。</summary>
+    Refine,
+    /// <summary>種類ごとの下書きを切り替える。</summary>
+    ChangeKind,
+    /// <summary>検討用の案を新しい企画として開く。</summary>
+    ApplyIdea
 }

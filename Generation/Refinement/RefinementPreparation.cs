@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Storage;
 
 namespace GameMockStudio.Generation.Refinement;
@@ -23,6 +24,10 @@ public sealed class RefinementPreparation(ArtifactValidator validator, BriefStor
         foreach (var name in new[] { "resolved-brief.json", "README.md", "decisions.md", "generation-report.json" })
         {
             File.Move(Path.Combine(directory, name), Path.Combine(directory, "baseline-" + name));
+        }
+        if (brief.Kind != MockKind.Game)
+        {
+            File.Move(Path.Combine(directory, "experiment.md"), Path.Combine(directory, "baseline-experiment.md"));
         }
         await File.WriteAllTextAsync(Path.Combine(directory, "feedback.md"), request.Feedback, cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(directory, "refinement-request.json"),

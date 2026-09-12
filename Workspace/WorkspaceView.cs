@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Subjects;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
+using GameMockStudio.Brief.Discovery;
+using GameMockStudio.Workspace.Discovery;
 using GameMockStudio.Generation.History;
 using GameMockStudio.Workspace.Editing;
 using GameMockStudio.Workspace.Refinement;
@@ -19,8 +24,15 @@ public sealed class WorkspaceView : IDisposable
 {
     private const int MaximumLogCharacters = 60000;
     private const int LogTabIndex = 1;
+    private const int DiscoveryTabIndex = 2;
     private readonly WorkspaceControls controls;
-    private readonly BriefEditor editor;
+    private BriefEditor editor;
+    private readonly FieldCatalogs catalogs;
+    private readonly ComboBox kind;
+    private readonly IdeaExplorer ideas;
+    private readonly Subject<Unit> editorChanges = new();
+    private readonly SerialDisposable editorSubscription = new();
+    private bool updatingBrief;
     private readonly ComboBox format;
     private readonly TextBox prompt;
     private readonly TextBox log;
@@ -33,10 +45,13 @@ public sealed class WorkspaceView : IDisposable
     private bool updatingHistory;
 
     /// <summary>UIイベントをObservableとして公開する。</summary>
-    public WorkspaceView(WorkspaceControls controls, FieldCatalog catalog)
+    public WorkspaceView(WorkspaceControls controls, FieldCatalogs catalogs)
     {
         this.controls = controls;
-        editor = new BriefEditor(catalog, controls);
+        this.catalogs = catalogs;
+        editor = new BriefEditor(catalogs.ForKind(MockKind.Game), controls);
+        kind = controls.Find<ComboBox>("KindSelector");
+        ideas = new IdeaExplorer(controls, new IdeaCatalog(catalogs));
         format = controls.Find<ComboBox>("FormatSelector");
         prompt = controls.Find<TextBox>("PromptBox");
         log = controls.Find<TextBox>("LogBox");
@@ -44,17 +59,29 @@ public sealed class WorkspaceView : IDisposable
         executable = controls.Find<TextBox>("ExecutableBox");
         outputRoot = controls.Find<TextBox>("OutputRootBox");
         history = controls.Find<ComboBox>("HistorySelector");
-        buttons = Enum.GetValues<WorkspaceAction>().ToDictionary(action => action,
+        buttons = Enum.GetValues<WorkspaceAction>().Where(action => action != WorkspaceAction.ChangeKind).ToDictionary(action => action,
             action => controls.Find<Button>(action + "Button"));
         FeedbackEditor = new FeedbackEditor(controls);
-        Commands = buttons.Select(pair => pair.Value.GetObservable(Button.ClickEvent).Select(_ => pair.Key)).Merge();
-        Changes = editor.Changes.Merge(format.GetObservable(SelectingItemsControl.SelectedIndexProperty)
-            .Skip(1).Select(_ => Unit.Default));
+        Commands = buttons.Select(pair => pair.Value.GetObservable(Button.ClickEvent).Select(_ => pair.Key)).Merge()
+            .Merge(kind.GetObservable(SelectingItemsControl.SelectedIndexProperty).Skip(1)
+                .Where(_ => !updatingBrief).Select(_ => WorkspaceAction.ChangeKind));
+        Changes = editorChanges.Merge(format.GetObservable(SelectingItemsControl.SelectedIndexProperty)
+            .Skip(1).Where(_ => !updatingBrief).Select(_ => Unit.Default));
         SettingsChanges = executable.GetObservable(TextBox.TextProperty)
             .Merge(outputRoot.GetObservable(TextBox.TextProperty)).Skip(2).Select(_ => Unit.Default);
         HistorySelection = history.GetObservable(SelectingItemsControl.SelectedIndexProperty)
             .Skip(1).Where(_ => !updatingHistory).Select(_ => Unit.Default);
+        SetEvent();
+        ShowKind();
     }
+
+    private void SetEvent()
+    {
+        editorSubscription.Disposable = editor.Changes.Where(_ => !updatingBrief).Subscribe(editorChanges.OnNext);
+    }
+
+    /// <summary>利用者が切り替えを要求した種類。</summary>
+    public MockKind RequestedKind => (MockKind)kind.SelectedIndex;
 
     /// <summary>利用者が要求した操作。</summary>
     public IObservable<WorkspaceAction> Commands { get; }
@@ -89,9 +116,64 @@ public sealed class WorkspaceView : IDisposable
     /// <summary>読み込んだ企画を表示する。</summary>
     public void ApplyBrief(BriefDocument document)
     {
-        editor.Apply(document);
-        format.SelectedIndex = (int)document.Format;
-        FeedbackEditor.ShowPlanning();
+        document = document.Normalize();
+        updatingBrief = true;
+        try
+        {
+            if (editor.Kind != document.Kind)
+            {
+                editorSubscription.Disposable = Disposable.Empty;
+                editor.Dispose();
+                controls.Find<StackPanel>("EditorHost").Children.Clear();
+                editor = new BriefEditor(catalogs.ForKind(document.Kind), controls);
+                SetEvent();
+            }
+            format.SelectedIndex = (int)document.Format;
+            kind.SelectedIndex = (int)document.Kind;
+            editor.Apply(document);
+            ShowKind();
+            FeedbackEditor.ShowPlanning();
+        }
+        finally
+        {
+            updatingBrief = false;
+        }
+        editorChanges.OnNext(Unit.Default);
+    }
+
+    /// <summary>切り替えに失敗した場合も、種類の表示を実際の編集中データに合わせる。</summary>
+    public void RestoreKindSelection()
+    {
+        updatingBrief = true;
+        kind.SelectedIndex = (int)editor.Kind;
+        updatingBrief = false;
+    }
+
+    /// <summary>検討用の案を現在の形式で取り出す。</summary>
+    public BriefDocument CaptureIdea()
+    {
+        return ideas.Capture((MockFormat)format.SelectedIndex);
+    }
+
+    /// <summary>新しい領域の検討用の案を表示する。</summary>
+    public void ShowDiscovery()
+    {
+        controls.Find<TabControl>("EditorTabs").SelectedIndex = DiscoveryTabIndex;
+    }
+
+    private void ShowKind()
+    {
+        var label = catalogs.ForKind(editor.Kind).Label;
+        controls.Find<TextBlock>("HeadingText").Text = editor.Kind switch
+        {
+            MockKind.Game => "思いついたところから、ゲームに。",
+            MockKind.Service => "誰の、どんな困りごとを変えよう。",
+            _ => "日常の一場面を、ゲームと掛け合わせる。"
+        };
+        controls.Find<TextBlock>("PlanningLabelText").Text = $"01  /  {label}の設計";
+        buttons[WorkspaceAction.Generate].Content = $"{label}モックを生成  →";
+        controls.Find<ComboBoxItem>("UnityFormatItem").IsEnabled = editor.Kind != MockKind.Service;
+        ideas.ShowKind(editor.Kind);
     }
 
     /// <summary>生成指示のプレビューを更新する。</summary>
@@ -128,7 +210,7 @@ public sealed class WorkspaceView : IDisposable
         {
             historyDirectories = entries.Select(entry => entry.OutputDirectory).ToArray();
             history.ItemsSource = entries.Select(entry =>
-                $"{entry.StartedAt.ToLocalTime():MM/dd HH:mm} · {DescribeOutcome(entry.Outcome)} · {entry.Format}"
+                $"{entry.StartedAt.ToLocalTime():MM/dd HH:mm} · {DescribeOutcome(entry.Outcome)} · {catalogs.ForKind(entry.Kind).Label} · {entry.Format}"
                 + (entry.SourceDirectory.Length > 0 ? " · 改善版" : string.Empty)).ToArray();
             var position = Array.IndexOf(historyDirectories, selected);
             var fallback = entries.Count > 0 ? 0 : -1;
@@ -161,7 +243,8 @@ public sealed class WorkspaceView : IDisposable
     {
         controls.Find<StackPanel>("ConfigurationPanel").IsEnabled = !running;
         controls.Find<StackPanel>("EditorHost").IsEnabled = !running;
-        foreach (var action in new[] { WorkspaceAction.New, WorkspaceAction.Load, WorkspaceAction.Save, WorkspaceAction.Generate })
+        kind.IsEnabled = !running;
+        foreach (var action in new[] { WorkspaceAction.New, WorkspaceAction.Load, WorkspaceAction.Save, WorkspaceAction.Generate, WorkspaceAction.ApplyIdea })
         {
             buttons[action].IsEnabled = !running;
         }
@@ -181,7 +264,8 @@ public sealed class WorkspaceView : IDisposable
         FeedbackEditor.SetBusy(busy);
         controls.Find<StackPanel>("ConfigurationPanel").IsEnabled = !busy;
         controls.Find<StackPanel>("EditorHost").IsEnabled = !busy;
-        foreach (var action in new[] { WorkspaceAction.New, WorkspaceAction.Load, WorkspaceAction.Save, WorkspaceAction.Generate })
+        kind.IsEnabled = !busy;
+        foreach (var action in new[] { WorkspaceAction.New, WorkspaceAction.Load, WorkspaceAction.Save, WorkspaceAction.Generate, WorkspaceAction.ApplyIdea })
         {
             buttons[action].IsEnabled = !busy;
         }
@@ -212,7 +296,10 @@ public sealed class WorkspaceView : IDisposable
     /// <summary>画面が所有する購読を解除する。</summary>
     public void Dispose()
     {
+        editorSubscription.Dispose();
+        editorChanges.Dispose();
         editor.Dispose();
+        ideas.Dispose();
         FeedbackEditor.Dispose();
     }
 

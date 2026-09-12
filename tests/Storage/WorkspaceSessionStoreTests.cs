@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Text.Json;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Storage;
 using Xunit;
 
@@ -12,6 +15,42 @@ namespace GameMockStudio.Tests.Storage;
 public sealed class WorkspaceSessionStoreTests : IDisposable
 {
     private readonly string directory = Path.Combine(Path.GetTempPath(), "mock-session-tests-" + Guid.NewGuid().ToString("N"));
+
+    /// <summary>種類がない旧セッションの企画・履歴・感想を保ったまま、新しい下書きを保存できる。</summary>
+    [Fact]
+    public async Task LegacySessionMigratesAndRetainsHistoryAndFeedback()
+    {
+        Directory.CreateDirectory(directory);
+        using var store = new WorkspaceSessionStore(directory);
+        var path = JsonSerializer.Serialize(directory);
+        await File.WriteAllTextAsync(store.SessionPath, $$$"""
+            {"Version":1,"Brief":{"Version":1,"Format":1,"Genres":["パズル"],"Values":{"future_rule":"旧指定"}},
+            "Executable":"codex","OutputRoot":{{{path}}},"History":[{"StartedAt":"2026-09-12T00:00:00Z",
+            "OutputDirectory":{{{path}}},"Format":0,"Outcome":1,"Feedback":"残す感想"}]}
+            """, TestContext.Current.CancellationToken);
+        var loaded = (await store.LoadAsync(CancellationToken.None))!;
+        Assert.Equal(MockKind.Game, loaded.History[0].Kind);
+        Assert.Equal("残す感想", loaded.History[0].Feedback);
+        var service = new BriefDocument { Kind = MockKind.Service, Values = new() { ["service_title"] = "新しい道具" } };
+        await store.SaveAsync(loaded with { Brief = service }, CancellationToken.None);
+        var saved = (await store.LoadAsync(CancellationToken.None))!;
+        Assert.Equal(WorkspaceSession.CurrentVersion, saved.Version);
+        Assert.Equal("旧指定", saved.Drafts.Single(brief => brief.Kind == MockKind.Game).Values["future_rule"]);
+        Assert.Equal(MockFormat.Unity, saved.Drafts.Single(brief => brief.Kind == MockKind.Game).Format);
+        Assert.Equal("新しい道具", saved.Brief.Values["service_title"]);
+        Assert.Equal(loaded.History, saved.History);
+    }
+
+    /// <summary>重複した種類の下書きを黙って上書きせず、原本の救出が可能なエラーにする。</summary>
+    [Fact]
+    public async Task DuplicateDraftsAreRejectedWithoutReplacingSavedSession()
+    {
+        using var store = new WorkspaceSessionStore(directory);
+        await store.SaveAsync(CreateSession("保存済み"), CancellationToken.None);
+        var duplicate = CreateSession("失う入力") with { Drafts = [new BriefDocument(), new BriefDocument()] };
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.SaveAsync(duplicate, CancellationToken.None));
+        Assert.Equal("保存済み", (await store.LoadAsync(CancellationToken.None))!.Brief.Values["world_theme"]);
+    }
 
     /// <summary>中断した上書きが、直前の保存を壊さない。</summary>
     [Fact]

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
@@ -8,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation;
 using GameMockStudio.Generation.History;
 using GameMockStudio.Generation.Refinement;
@@ -24,6 +26,7 @@ public sealed class WorkspacePresenter : IDisposable
     private readonly PromptComposer composer;
     private readonly CodexRunner runner;
     private readonly GenerationHistory history = new();
+    private readonly BriefDrafts drafts = new();
     private readonly WorkspacePersistence persistence;
     private readonly IScheduler userInterface = new SynchronizationContextScheduler(new AvaloniaSynchronizationContext());
     private readonly CompositeDisposable subscriptions = new();
@@ -33,6 +36,7 @@ public sealed class WorkspacePresenter : IDisposable
     private string variationIdentifier = Guid.NewGuid().ToString("N");
     private string outputDirectory = string.Empty;
     private MockFormat generatedFormat;
+    private MockKind generatedKind;
     private GenerationHistoryEntry? activeGeneration;
     private RefinementRequest? activeRefinement;
 
@@ -44,7 +48,7 @@ public sealed class WorkspacePresenter : IDisposable
         this.files = files;
         this.composer = composer;
         this.runner = runner;
-        persistence = new WorkspacePersistence(view, history, sessionStore, userInterface);
+        persistence = new WorkspacePersistence(view, history, drafts, sessionStore, userInterface);
         subscriptions.Add(generation);
         subscriptions.Add(history);
     }
@@ -148,7 +152,13 @@ public sealed class WorkspacePresenter : IDisposable
         switch (action)
         {
             case WorkspaceAction.New:
-                await ApplyDocumentAsync(new BriefDocument(), cancellationToken);
+                await ApplyDocumentAsync(new BriefDocument { Kind = view.CaptureBrief().Kind }, cancellationToken);
+                break;
+            case WorkspaceAction.ChangeKind:
+                await ChangeKindAsync(cancellationToken);
+                break;
+            case WorkspaceAction.ApplyIdea:
+                await ApplyDocumentAsync(view.CaptureIdea(), cancellationToken);
                 break;
             case WorkspaceAction.Load:
                 await LoadAsync(cancellationToken);
@@ -174,7 +184,7 @@ public sealed class WorkspacePresenter : IDisposable
                 var selected = SelectedHistory();
                 if (selected is not { Outcome: GenerationOutcome.Completed })
                 {
-                    throw new InvalidOperationException("生成完了したゲームを履歴から選んでください。");
+                    throw new InvalidOperationException("生成完了したモックを履歴から選んでください。");
                 }
                 StartGeneration(new RefinementRequest
                 {
@@ -197,6 +207,28 @@ public sealed class WorkspacePresenter : IDisposable
         }
     }
 
+    private async Task ChangeKindAsync(CancellationToken cancellationToken)
+    {
+        var target = view.RequestedKind;
+        if (target == view.CaptureBrief().Kind)
+        {
+            return;
+        }
+        try
+        {
+            var document = drafts.ForKind(target);
+            await ApplyDocumentAsync(document, cancellationToken);
+            if (document.Genres.Length == 0 && document.Values.Values.All(string.IsNullOrWhiteSpace))
+            {
+                view.ShowDiscovery();
+            }
+        }
+        finally
+        {
+            view.RestoreKindSelection();
+        }
+    }
+
     private async Task LoadAsync(CancellationToken cancellationToken)
     {
         var document = await files.LoadBriefAsync(cancellationToken);
@@ -212,7 +244,10 @@ public sealed class WorkspacePresenter : IDisposable
         view.SetFileOperation(true);
         try
         {
-            var backup = await files.SaveRecoveryAsync(view.CaptureBrief(), cancellationToken);
+            var current = view.CaptureBrief();
+            var backup = await files.SaveRecoveryAsync(current, cancellationToken);
+            drafts.Remember(current);
+            await PreserveOtherDraftAsync(current.Kind, document.Kind, cancellationToken);
             view.ApplyBrief(document);
             variationIdentifier = Guid.NewGuid().ToString("N");
             RefreshPrompt();
@@ -224,6 +259,20 @@ public sealed class WorkspacePresenter : IDisposable
         }
     }
 
+    private async Task PreserveOtherDraftAsync(MockKind current, MockKind target, CancellationToken cancellationToken)
+    {
+        if (current == target)
+        {
+            return;
+        }
+        var previous = drafts.ForKind(target);
+        if (previous.Genres.Length > 0 || previous.Values.Values.Any(value => !string.IsNullOrWhiteSpace(value)))
+        {
+            // 別の種類の補完企画を開いた場合も、置換先で以前編集していた下書きを救出できるようにする。
+            await files.SaveRecoveryAsync(previous, cancellationToken);
+        }
+    }
+
     private void StartGeneration(RefinementRequest? refinement)
     {
         if (string.IsNullOrWhiteSpace(view.Executable) || !Path.IsPathFullyQualified(view.OutputRoot))
@@ -231,9 +280,9 @@ public sealed class WorkspacePresenter : IDisposable
             throw new InvalidOperationException("Codex実行ファイルと、絶対パスの出力先を指定してください。");
         }
         refinement?.Validate();
-        var brief = refinement is null ? view.CaptureBrief() : new BriefDocument { Format = SelectedHistory()!.Format };
+        var brief = refinement is null ? view.CaptureBrief() : new BriefDocument { Kind = SelectedHistory()!.Kind, Format = SelectedHistory()!.Format };
         var prompt = refinement is null ? composer.Compose(brief, variationIdentifier)
-            : composer.ComposeRefinement(brief.Format, refinement.Feedback, variationIdentifier);
+            : composer.ComposeRefinement(brief.Kind, brief.Format, refinement.Feedback, variationIdentifier);
         view.ShowPrompt(prompt);
         var request = new GenerationRequest
         {
@@ -245,6 +294,7 @@ public sealed class WorkspacePresenter : IDisposable
         };
         state = WorkspaceState.Generating;
         generatedFormat = brief.Format;
+        generatedKind = brief.Kind;
         outputDirectory = string.Empty;
         activeGeneration = null;
         activeRefinement = refinement;
@@ -265,6 +315,7 @@ public sealed class WorkspacePresenter : IDisposable
                 StartedAt = DateTimeOffset.Now,
                 OutputDirectory = outputDirectory,
                 Format = generatedFormat,
+                Kind = generatedKind,
                 Outcome = GenerationOutcome.Running,
                 SourceDirectory = activeRefinement?.SourceDirectory ?? string.Empty,
                 AppliedFeedback = activeRefinement?.Feedback ?? string.Empty
@@ -322,8 +373,8 @@ public sealed class WorkspacePresenter : IDisposable
         var selected = SelectedHistory();
         if (view.FeedbackEditor.IsRefining)
         {
-            var prompt = selected is null ? "改善するゲームを生成履歴から選んでください。"
-                : composer.ComposeRefinement(selected.Format, view.FeedbackEditor.Feedback, variationIdentifier);
+            var prompt = selected is null ? "改善するモックを生成履歴から選んでください。"
+                : composer.ComposeRefinement(selected.Kind, selected.Format, view.FeedbackEditor.Feedback, variationIdentifier);
             view.ShowPrompt(prompt);
             return;
         }

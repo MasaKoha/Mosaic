@@ -1,0 +1,182 @@
+[
+  {
+    "Label": "領域と行動",
+    "Description": "ゲームの仕組みを足す前に、現実側のどの場面を変えたいかを決めます。",
+    "Fields": [
+      {
+        "Identifier": "gamification_domain",
+        "Label": "掛け合わせる領域",
+        "Description": "学習、生活、仕事、地域など。",
+        "Example": "語学学習"
+      },
+      {
+        "Identifier": "gamification_audience",
+        "Label": "対象者と状況",
+        "Description": "誰がどんな状況で使うか。",
+        "Example": "単語の復習が続かない社会人"
+      },
+      {
+        "Identifier": "gamification_moment",
+        "Label": "対象とする具体的な場面",
+        "Description": "領域全体ではなく一つの瞬間に絞ります。",
+        "Example": "帰宅後に今日の単語を復習する5分"
+      },
+      {
+        "Identifier": "gamification_behavior",
+        "Label": "増やしたい行動",
+        "Description": "現実の行動として観察できる形にします。",
+        "Example": "苦手な単語を3問復習する"
+      },
+      {
+        "Identifier": "gamification_friction",
+        "Label": "行動を妨げる原因",
+        "Description": "根拠がない場合は仮説と明記します。",
+        "Example": "進歩が見えず取りかかりづらいのではないか"
+      },
+      {
+        "Identifier": "gamification_value",
+        "Label": "ゲーム外で得る価値",
+        "Description": "スコアではなく利用者の変化。",
+        "Example": "苦手な単語を思い出せるようになる"
+      }
+    ]
+  },
+  {
+    "Label": "行動とゲームの接続",
+    "Description": "点数だけでなく、行動がプレイや選択にどう影響するかを設計します。",
+    "Fields": [
+      {
+        "Identifier": "gamification_mechanic",
+        "Label": "組み合わせるゲームの仕組み",
+        "Description": "一つの主要な仕組みから始めます。",
+        "Example": "復習でカードを育てるデッキ構築"
+      },
+      {
+        "Identifier": "gamification_mapping",
+        "Label": "現実の行動→ゲームの変化",
+        "Description": "一対一の対応を具体化します。",
+        "Example": "復習を完了すると選んだカードの能力が変わる"
+      },
+      {
+        "Identifier": "gamification_loop",
+        "Label": "最小の体験ループ",
+        "Description": "行動→反応→選択→次の行動をつなぎます。",
+        "Example": "3問復習→カード育成→模擬戦→苦手を選んで再挑戦"
+      },
+      {
+        "Identifier": "gamification_choices",
+        "Label": "利用者の意味ある選択",
+        "Description": "結果に違いが出る選択肢。",
+        "Example": "得意な単語を伸ばすか苦手を補うか選ぶ"
+      },
+      {
+        "Identifier": "gamification_reward",
+        "Label": "報酬と価値の関係",
+        "Description": "目的を損なわない報酬。",
+        "Example": "学んだ内容がカードの説明に反映される"
+      },
+      {
+        "Identifier": "gamification_progress",
+        "Label": "進歩の見せ方",
+        "Description": "累積量だけでなく習得や達成を示します。",
+        "Example": "思い出せた単語と次に復習する単語を分ける"
+      },
+      {
+        "Identifier": "gamification_return",
+        "Label": "再開しやすさ",
+        "Description": "休んだ人が不利益なく戻れる形。",
+        "Example": "連続日数を失わせず前回から再開できる"
+      }
+    ]
+  },
+  {
+    "Label": "参加の選択と限界",
+    "Description": "ゲームが苦手な人にも現実の目的を達成できる経路を残します。",
+    "Fields": [
+      {
+        "Identifier": "gamification_control",
+        "Label": "ゲーム要素を選べる範囲",
+        "Description": "オフ・一時停止・通知選択など。",
+        "Example": "同じ復習を通常モードでも使える"
+      },
+      {
+        "Identifier": "gamification_social",
+        "Label": "協力・競争の必要性",
+        "Description": "比較が負担になる場合は使いません。",
+        "Example": "順位を付けず自分の進歩を見る"
+      },
+      {
+        "Identifier": "gamification_limits",
+        "Label": "負担を増やさない設計",
+        "Description": "過剰利用や損失への不安を避けます。",
+        "Example": "1回5分で終了し休んでも資産を失わない"
+      },
+      {
+        "Identifier": "gamification_integrity",
+        "Label": "本来の目的とのずれ",
+        "Description": "稼ぐだけの行動を防ぐ仮説。",
+        "Example": "回数だけを報酬にせず復習結果を反映する"
+      },
+      {
+        "Identifier": "gamification_privacy",
+        "Label": "現実データの境界",
+        "Description": "実データ不要のデモとして作ります。",
+        "Example": "架空の学習履歴を使い外部へ送信しない"
+      },
+      {
+        "Identifier": "gamification_inclusion",
+        "Label": "合わない利用者への配慮",
+        "Description": "操作・感覚・時間などの制約。",
+        "Example": "時間制限を外せて演出を減らせる"
+      }
+    ]
+  },
+  {
+    "Label": "比較と検証",
+    "Description": "面白さと本来の価値を別々に観察し、効果は仮説として扱います。",
+    "Fields": [
+      {
+        "Identifier": "gamification_hypothesis",
+        "Label": "効果の仮説",
+        "Description": "なぜこの組み合わせなら行動が変わるか。",
+        "Example": "育成先の選択が復習に取りかかる動機になるのではないか"
+      },
+      {
+        "Identifier": "gamification_comparison",
+        "Label": "ゲームなしとの比較",
+        "Description": "同じ中心機能を通常版でも試せる形。",
+        "Example": "同じ3問を通常の復習画面とカード版で試す"
+      },
+      {
+        "Identifier": "gamification_metrics",
+        "Label": "観察する指標",
+        "Description": "行動と体験の両方を測ります。",
+        "Example": "復習完了、迷い、再度試したい理由"
+      },
+      {
+        "Identifier": "gamification_failure",
+        "Label": "採用を見直す条件",
+        "Description": "面白くても現実の価値を損ねるなら見直します。",
+        "Example": "演出で復習時間が増え学習内容を覚えていない"
+      },
+      {
+        "Identifier": "gamification_scenarios",
+        "Label": "試す順番と操作",
+        "Description": "入力→行動→ゲーム反映→再試行を確認します。",
+        "Example": "3問復習→育成→通常版へ切替→再試行"
+      },
+      {
+        "Identifier": "gamification_scope",
+        "Label": "最初の検証範囲",
+        "Description": "実連携なしで一巡できる規模。",
+        "Example": "単語6件、カード3枚、1回の模擬戦"
+      },
+      {
+        "Identifier": "gamification_next",
+        "Label": "比較後に判断すること",
+        "Description": "続ける仕組み、外す仕組みを検討します。",
+        "Example": "育成が役立つか、復習ツールだけに絞るか"
+      }
+    ]
+  }
+]

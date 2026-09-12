@@ -3,13 +3,13 @@ using System.IO;
 
 namespace GameMockStudio.Generation.Refinement;
 
-/// <summary>元のゲームを残して改善版を作るための入力。</summary>
+/// <summary>元のモックを残して改善版を作るための入力。</summary>
 public sealed record RefinementRequest
 {
     /// <summary>保存と生成指示へ渡せる感想の文字数上限。</summary>
     public const int MaximumFeedbackCharacters = 10000;
 
-    /// <summary>改善の起点にする完成済みゲームの絶対パス。</summary>
+    /// <summary>改善の起点にする完成済みモックの絶対パス。</summary>
     public required string SourceDirectory { get; init; }
     /// <summary>今回反映する感想と改善要望。</summary>
     public required string Feedback { get; init; }
@@ -19,7 +19,7 @@ public sealed record RefinementRequest
     {
         if (string.IsNullOrWhiteSpace(SourceDirectory) || !Path.IsPathFullyQualified(SourceDirectory))
         {
-            throw new InvalidOperationException("改善するゲームの成果物フォルダが不正です。");
+            throw new InvalidOperationException("改善するモックの成果物フォルダが不正です。");
         }
         if (string.IsNullOrWhiteSpace(Feedback) || Feedback.Length > MaximumFeedbackCharacters)
         {

@@ -7,11 +7,13 @@ namespace GameMockStudio.Storage;
 public sealed record WorkspaceSession
 {
     /// <summary>対応している保存形式。</summary>
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;
     /// <summary>保存形式の互換性バージョン。</summary>
     public int Version { get; init; } = CurrentVersion;
     /// <summary>編集中の企画。</summary>
     public required BriefDocument Brief { get; init; }
+    /// <summary>種類ごとに保持する企画。旧版のセッションでは現在企画から復元する。</summary>
+    public BriefDocument[] Drafts { get; init; } = [];
     /// <summary>選択されたCLI実行ファイル。</summary>
     public required string Executable { get; init; }
     /// <summary>選択された生成先。</summary>

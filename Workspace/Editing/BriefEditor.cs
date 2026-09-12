@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 
 namespace GameMockStudio.Workspace.Editing;
 
@@ -18,6 +19,7 @@ public sealed class BriefEditor : IDisposable
     private const double SectionSpacing = 12;
     private const double HeadingFontSize = 22;
     private readonly FieldCatalog catalog;
+    private readonly int genreCategoryIndex;
     private readonly ListBox navigation;
     private readonly TextBox search;
     private readonly TextBlock completion;
@@ -33,6 +35,8 @@ public sealed class BriefEditor : IDisposable
     public BriefEditor(FieldCatalog catalog, WorkspaceControls controls)
     {
         this.catalog = catalog;
+        genreCategoryIndex = catalog.Categories.TakeWhile(category =>
+            category.Fields.All(field => field.Identifier != "title")).Count();
         navigation = controls.Find<ListBox>("CategoryList");
         search = controls.Find<TextBox>("SearchBox");
         completion = controls.Find<TextBlock>("CompletionText");
@@ -50,12 +54,20 @@ public sealed class BriefEditor : IDisposable
         }
         host.Children.Add(noResults);
         Changes = fields.Values.Select(field => field.Changes).Append(genres.Changes).Merge();
+        SetEvent();
+        UpdateCompletion();
+    }
+
+    private void SetEvent()
+    {
         subscriptions.Add(Changes.Subscribe(_ => UpdateCompletion()));
         subscriptions.Add(navigation.GetObservable(SelectingItemsControl.SelectedIndexProperty)
             .Subscribe(_ => Filter()));
         subscriptions.Add(search.GetObservable(TextBox.TextProperty).Subscribe(_ => Filter()));
-        UpdateCompletion();
     }
+
+    /// <summary>表示している企画の種類。</summary>
+    public MockKind Kind => catalog.Kind;
 
     /// <summary>企画の入力変更。</summary>
     public IObservable<Unit> Changes { get; }
@@ -65,8 +77,9 @@ public sealed class BriefEditor : IDisposable
     {
         return new BriefDocument
         {
+            Kind = catalog.Kind,
             Format = format,
-            Genres = genres.Capture(),
+            Genres = catalog.Kind == MockKind.Service ? [] : genres.Capture(),
             Values = unknownValues.Concat(fields.Select(pair =>
                 new KeyValuePair<string, string>(pair.Key, pair.Value.Value)))
                 .ToDictionary(pair => pair.Key, pair => pair.Value)
@@ -115,8 +128,8 @@ public sealed class BriefEditor : IDisposable
     {
         var query = search.Text?.Trim() ?? string.Empty;
         var searching = query.Length > 0;
-        genres.Control.IsVisible = searching ? "ジャンル genre".Contains(query, StringComparison.OrdinalIgnoreCase)
-            : navigation.SelectedIndex == 0;
+        genres.Control.IsVisible = catalog.Kind != MockKind.Service && (searching
+            ? "ジャンル genre".Contains(query, StringComparison.OrdinalIgnoreCase) : navigation.SelectedIndex == genreCategoryIndex);
         for (var categoryIndex = 0; categoryIndex < catalog.Categories.Count; categoryIndex++)
         {
             FilterSection(categoryIndex, query, searching);
@@ -144,7 +157,8 @@ public sealed class BriefEditor : IDisposable
         var specified = fields.Values.Count(field => field.Value.Length > 0);
         var selectedGenres = genres.Capture();
         completion.Text = $"{specified} / {fields.Count} 項目を指定\n残り {fields.Count - specified} 項目はランダム\n"
-            + (selectedGenres.Length == 0 ? "ジャンル: ランダム" : $"ジャンル: {selectedGenres.Length} 種類")
+            + (catalog.Kind == MockKind.Service ? string.Empty
+                : selectedGenres.Length == 0 ? "ジャンル: ランダム" : $"ジャンル: {selectedGenres.Length} 種類")
             + (unknownValues.Count > 0 ? $"\n追加項目 {unknownValues.Count} 件を保持" : string.Empty);
     }
 }

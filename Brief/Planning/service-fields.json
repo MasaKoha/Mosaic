@@ -1,0 +1,422 @@
+[
+  {
+    "Label": "サービスの仮説",
+    "Description": "何を作るかを決める前に、誰のどんな変化を確かめたいかを整理します。",
+    "Fields": [
+      {
+        "Identifier": "service_title",
+        "Label": "サービス名",
+        "Description": "仮の名前で構いません。",
+        "Example": "おすそわけノート"
+      },
+      {
+        "Identifier": "service_type",
+        "Label": "サービスの種類",
+        "Description": "SNS、業務支援、学習、生活支援など。",
+        "Example": "小さな地域の助け合いSNS"
+      },
+      {
+        "Identifier": "service_pitch",
+        "Label": "一文で表す価値",
+        "Description": "対象者・場面・得られる変化をつなぎます。",
+        "Example": "近所の人へ余った食材を手間なく譲れる"
+      },
+      {
+        "Identifier": "service_problem",
+        "Label": "解決したい困りごと",
+        "Description": "実際に困る場面を具体的にします。",
+        "Example": "使い切れない食材を捨ててしまう"
+      },
+      {
+        "Identifier": "service_hypothesis",
+        "Label": "確かめたい仮説",
+        "Description": "事実と推測を分け、モックで確かめる問いを書きます。",
+        "Example": "徒歩圏内なら譲り先を探す負担が減るのではないか"
+      },
+      {
+        "Identifier": "service_difference",
+        "Label": "既存手段との違い",
+        "Description": "現在の代替手段と、変える理由を整理します。",
+        "Example": "大きな掲示板より受け渡し条件を短時間で確認できる"
+      }
+    ]
+  },
+  {
+    "Label": "利用者と利用場面",
+    "Description": "一般的な属性より、必要になる瞬間と制約を捉えます。",
+    "Fields": [
+      {
+        "Identifier": "service_users",
+        "Label": "主な利用者",
+        "Description": "誰が最初に使うかを絞ります。",
+        "Example": "一人暮らしで自炊する人"
+      },
+      {
+        "Identifier": "service_trigger",
+        "Label": "使い始めるきっかけ",
+        "Description": "どんな出来事の直後に開くか。",
+        "Example": "冷蔵庫の整理で余りに気づいたとき"
+      },
+      {
+        "Identifier": "service_frequency",
+        "Label": "頻度と所要時間",
+        "Description": "日常に入る使い方を指定します。",
+        "Example": "週1回、1分以内"
+      },
+      {
+        "Identifier": "service_context",
+        "Label": "利用環境",
+        "Description": "端末・場所・片手操作などの条件。",
+        "Example": "キッチンでスマートフォンを片手操作"
+      },
+      {
+        "Identifier": "service_obstacles",
+        "Label": "使いにくさの原因",
+        "Description": "時間、知識、心理的負担など。",
+        "Example": "知らない相手への連絡が不安"
+      },
+      {
+        "Identifier": "service_alternative",
+        "Label": "現在の代替手段",
+        "Description": "サービスを使わずに行っていること。",
+        "Example": "友人にメッセージしている"
+      }
+    ]
+  },
+  {
+    "Label": "価値と検証",
+    "Description": "モックは仮説を試す道具です。成功を約束せず、観察できる基準を置きます。",
+    "Fields": [
+      {
+        "Identifier": "service_outcome",
+        "Label": "利用後の変化",
+        "Description": "利用者の視点で得られる結果。",
+        "Example": "捨てる前に引き取り候補が見つかる"
+      },
+      {
+        "Identifier": "service_core_action",
+        "Label": "中心となる行動",
+        "Description": "一番重要な一つの操作。",
+        "Example": "食材を登録して受け渡し候補を選ぶ"
+      },
+      {
+        "Identifier": "service_first_value",
+        "Label": "初回で感じる価値",
+        "Description": "説明だけでなく体験させる結果。",
+        "Example": "サンプル食材から受け渡しまで試せる"
+      },
+      {
+        "Identifier": "service_evidence",
+        "Label": "仮説の根拠と未確認点",
+        "Description": "観察済みの事実と未確認の前提を分離します。",
+        "Example": "困りごとは聞いたが見知らぬ人との受け渡し意欲は未確認"
+      },
+      {
+        "Identifier": "service_success",
+        "Label": "観察する成功指標",
+        "Description": "計測可能な行動と仮の目標。",
+        "Example": "説明なしで候補選択まで進めるか"
+      },
+      {
+        "Identifier": "service_failure",
+        "Label": "見直す条件",
+        "Description": "継続しない、または方向転換する判断。",
+        "Example": "相手を探す操作に負担を感じる人が多い"
+      }
+    ]
+  },
+  {
+    "Label": "主要な利用フロー",
+    "Description": "入力から結果までをクリックできる最小の一巡を作ります。",
+    "Fields": [
+      {
+        "Identifier": "service_entry",
+        "Label": "入口",
+        "Description": "最初に見る画面と開始方法。",
+        "Example": "サンプルを試すボタンのあるホーム"
+      },
+      {
+        "Identifier": "service_steps",
+        "Label": "操作の順番",
+        "Description": "入力→操作→結果まで具体的に。",
+        "Example": "食材入力→条件選択→候補比較→仮の受け渡し確定"
+      },
+      {
+        "Identifier": "service_inputs",
+        "Label": "必要な入力",
+        "Description": "最小限の入力と省略可能な情報。",
+        "Example": "名前、量、受け渡し可能な時間帯"
+      },
+      {
+        "Identifier": "service_result",
+        "Label": "結果の表示",
+        "Description": "操作後の変化が理解できる画面。",
+        "Example": "選んだ候補と受け渡し条件をまとめて表示"
+      },
+      {
+        "Identifier": "service_recovery",
+        "Label": "編集・取消・やり直し",
+        "Description": "誤操作から戻れる経路。",
+        "Example": "確定前の修正と確定後の取消"
+      },
+      {
+        "Identifier": "service_onboarding",
+        "Label": "初回の案内",
+        "Description": "長い説明を避け、価値へ導きます。",
+        "Example": "デモ食材1件から始める"
+      }
+    ]
+  },
+  {
+    "Label": "画面と情報",
+    "Description": "見た目だけのページではなく、状態が変わる画面を設計します。",
+    "Fields": [
+      {
+        "Identifier": "service_screens",
+        "Label": "必要な画面",
+        "Description": "モックで必要な画面に限定します。",
+        "Example": "一覧、詳細、登録、結果"
+      },
+      {
+        "Identifier": "service_navigation",
+        "Label": "画面間の移動",
+        "Description": "現在地と戻り方。",
+        "Example": "下部ナビと詳細画面の戻るボタン"
+      },
+      {
+        "Identifier": "service_priority",
+        "Label": "情報の優先順位",
+        "Description": "最初に見えるべき情報。",
+        "Example": "受け渡し期限と距離"
+      },
+      {
+        "Identifier": "service_empty",
+        "Label": "空の状態",
+        "Description": "データがないときの次の行動。",
+        "Example": "登録例と食材を追加するボタン"
+      },
+      {
+        "Identifier": "service_errors",
+        "Label": "失敗時の案内",
+        "Description": "入力不備・通信失敗などをデモで再現します。",
+        "Example": "時間帯未選択なら該当欄で説明"
+      },
+      {
+        "Identifier": "service_copy",
+        "Label": "文章の口調",
+        "Description": "操作と結果が明確な短い表現。",
+        "Example": "親しみやすく、断定的な効果保証はしない"
+      }
+    ]
+  },
+  {
+    "Label": "機能とデータ",
+    "Description": "モックで実際に動かす部分と、仮データで置き換える部分を区別します。",
+    "Fields": [
+      {
+        "Identifier": "service_features",
+        "Label": "必須機能",
+        "Description": "中心の価値に必要な最少セット。",
+        "Example": "登録、絞り込み、候補選択、取消"
+      },
+      {
+        "Identifier": "service_data",
+        "Label": "扱うデータ",
+        "Description": "項目と関係を明示します。",
+        "Example": "食材、提供者、受け渡し候補"
+      },
+      {
+        "Identifier": "service_demo_data",
+        "Label": "サンプルデータ",
+        "Description": "架空の人物・内容だけを使います。",
+        "Example": "架空の食材6件、提供者3人"
+      },
+      {
+        "Identifier": "service_storage",
+        "Label": "保存範囲",
+        "Description": "ローカル保存とリセット方法。",
+        "Example": "端末内のみ保存しデモを初期化できる"
+      },
+      {
+        "Identifier": "service_search",
+        "Label": "検索・絞り込み",
+        "Description": "一覧がある場合の探し方。",
+        "Example": "食材の分類と受け渡し時間帯"
+      },
+      {
+        "Identifier": "service_automation",
+        "Label": "自動化の役割",
+        "Description": "AI判定などはデモであることを表示します。",
+        "Example": "候補の仮スコアを固定ルールで並べる"
+      }
+    ]
+  },
+  {
+    "Label": "SNS・共同利用",
+    "Description": "必要な場合だけ設計します。不要なら「なし」で明確に除外します。",
+    "Fields": [
+      {
+        "Identifier": "service_social",
+        "Label": "交流の必要性",
+        "Description": "SNSにする意味と対象範囲。",
+        "Example": "近所の閉じたコミュニティ内でのみ交流"
+      },
+      {
+        "Identifier": "service_posts",
+        "Label": "投稿・フィード",
+        "Description": "何を共有し、どう表示するか。",
+        "Example": "提供中の食材を期限順に表示"
+      },
+      {
+        "Identifier": "service_connections",
+        "Label": "人とのつながり",
+        "Description": "フォロー、グループ、招待など。",
+        "Example": "地域グループへのデモ参加"
+      },
+      {
+        "Identifier": "service_interactions",
+        "Label": "反応と会話",
+        "Description": "コメント等が価値に必要か。",
+        "Example": "引き取り希望と定型メッセージ"
+      },
+      {
+        "Identifier": "service_moderation",
+        "Label": "通報・非表示",
+        "Description": "利用者が困った相手や情報から離れる方法。",
+        "Example": "投稿を非表示にしデモ通報できる"
+      },
+      {
+        "Identifier": "service_visibility",
+        "Label": "公開範囲",
+        "Description": "誰に何が見えるか。",
+        "Example": "住所は表示せず架空の受け渡し場所を表示"
+      }
+    ]
+  },
+  {
+    "Label": "信頼と利用者の選択",
+    "Description": "実アカウントや実取引を使わず、モック内で境界を明示します。",
+    "Fields": [
+      {
+        "Identifier": "service_identity",
+        "Label": "ログインの扱い",
+        "Description": "本物の認証を要求しないデモ設計。",
+        "Example": "架空の利用者を切り替える"
+      },
+      {
+        "Identifier": "service_permissions",
+        "Label": "権限と同意",
+        "Description": "情報共有や通知を選べるようにします。",
+        "Example": "通知は初期オフ、デモ設定で変更可能"
+      },
+      {
+        "Identifier": "service_privacy",
+        "Label": "個人情報の扱い",
+        "Description": "入力を求める必要性と削除方法。",
+        "Example": "本名や住所は入力させずデモデータを使用"
+      },
+      {
+        "Identifier": "service_safety",
+        "Label": "誤解や負担の防止",
+        "Description": "体験上の不安を減らす説明。",
+        "Example": "実際には受け渡しされないと明記"
+      },
+      {
+        "Identifier": "service_external",
+        "Label": "外部サービス",
+        "Description": "認証・決済・送信は仮動作に限定します。",
+        "Example": "通知送信は画面内のデモログのみ"
+      },
+      {
+        "Identifier": "service_business",
+        "Label": "継続の仕組み",
+        "Description": "料金等は仮説として示し、実課金しません。",
+        "Example": "地域団体向け運用支援を将来検討"
+      }
+    ]
+  },
+  {
+    "Label": "見た目と使いやすさ",
+    "Description": "価値が伝わり、迷わず一巡できる画面を作ります。",
+    "Fields": [
+      {
+        "Identifier": "service_visual",
+        "Label": "デザイン方針",
+        "Description": "色、雰囲気、密度など。",
+        "Example": "明るい配色と余白のあるカード"
+      },
+      {
+        "Identifier": "service_layout",
+        "Label": "端末とレイアウト",
+        "Description": "主に使うサイズ。",
+        "Example": "スマートフォン優先、PCでも使える"
+      },
+      {
+        "Identifier": "service_accessibility",
+        "Label": "アクセシビリティ",
+        "Description": "文字・色・キーボード操作など。",
+        "Example": "色だけで状態を示さず入力欄にラベル"
+      },
+      {
+        "Identifier": "service_language",
+        "Label": "対応言語",
+        "Description": "モックの表示言語。",
+        "Example": "日本語"
+      },
+      {
+        "Identifier": "service_feedback",
+        "Label": "操作への反応",
+        "Description": "進捗や結果を分かりやすく示します。",
+        "Example": "登録後に一覧と件数が更新される"
+      },
+      {
+        "Identifier": "service_assets",
+        "Label": "画像等の方針",
+        "Description": "自作図形や権利が明確な素材を使います。",
+        "Example": "外部画像を使わずアイコンと色面"
+      }
+    ]
+  },
+  {
+    "Label": "モックの範囲と試し方",
+    "Description": "実装規模を絞り、次に進むための判断材料を残します。",
+    "Fields": [
+      {
+        "Identifier": "service_scope",
+        "Label": "実装する範囲",
+        "Description": "最小の価値が体験できる範囲。",
+        "Example": "登録から候補選択までの1フロー"
+      },
+      {
+        "Identifier": "service_exclusions",
+        "Label": "今回は作らないこと",
+        "Description": "広がりすぎを防ぎます。",
+        "Example": "実配送、実決済、本物の通知"
+      },
+      {
+        "Identifier": "service_mocks",
+        "Label": "デモにする機能",
+        "Description": "仮の結果と実装済み動作を区別します。",
+        "Example": "相手の返事は固定データ"
+      },
+      {
+        "Identifier": "service_test_scenarios",
+        "Label": "試すシナリオ",
+        "Description": "正常・空・失敗・やり直しを含めます。",
+        "Example": "登録→候補選択→取消、入力不足、候補0件"
+      },
+      {
+        "Identifier": "service_questions",
+        "Label": "利用後に聞くこと",
+        "Description": "次の改善につながる問い。",
+        "Example": "現在の方法より楽か、どこで迷ったか"
+      },
+      {
+        "Identifier": "service_next_decision",
+        "Label": "次に決めること",
+        "Description": "モックを見て決めたい方向性。",
+        "Example": "SNSとして広げるか個人用の整理ツールに絞るか"
+      }
+    ]
+  }
+]

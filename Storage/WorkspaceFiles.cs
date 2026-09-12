@@ -12,7 +12,7 @@ namespace GameMockStudio.Storage;
 /// <summary>ローカル企画の選択・退避と成果物を開く操作を担当する。</summary>
 public sealed class WorkspaceFiles(Window window, BriefStore store, string dataDirectory)
 {
-    private readonly FilePickerFileType briefType = new("ゲーム企画 JSON") { Patterns = ["*.json"] };
+    private readonly FilePickerFileType briefType = new("モック企画 JSON") { Patterns = ["*.json"] };
 
     /// <summary>生成物の標準保存先。</summary>
     public static string DefaultOutputRoot => Path.Combine(
@@ -47,8 +47,8 @@ public sealed class WorkspaceFiles(Window window, BriefStore store, string dataD
     {
         using var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "ゲーム企画を保存",
-            SuggestedFileName = "game-brief.json",
+            Title = "モック企画を保存",
+            SuggestedFileName = "mock-brief.json",
             DefaultExtension = "json",
             FileTypeChoices = [briefType]
         });
@@ -66,7 +66,7 @@ public sealed class WorkspaceFiles(Window window, BriefStore store, string dataD
     {
         var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title = "ゲーム企画を開く（補完済み企画も読み込めます）",
+            Title = "モック企画を開く（補完済み企画も読み込めます）",
             AllowMultiple = false,
             FileTypeFilter = [briefType]
         });

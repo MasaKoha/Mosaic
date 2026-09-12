@@ -7,6 +7,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using GameMockStudio.Generation.History;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation.Refinement;
 
 namespace GameMockStudio.Workspace.Refinement;
@@ -59,7 +60,7 @@ public sealed class FeedbackEditor : IDisposable
         tabs.SelectedIndex = 0;
     }
 
-    /// <summary>ゲームごとの下書きと、今回の版に適用済みの感想を表示する。</summary>
+    /// <summary>モックごとの下書きと、今回の版に適用済みの感想を表示する。</summary>
     public void ShowTarget(GenerationHistoryEntry? selected)
     {
         updating = true;
@@ -69,11 +70,11 @@ public sealed class FeedbackEditor : IDisposable
             available = selected is { Outcome: GenerationOutcome.Completed }
                 && Directory.Exists(selected.OutputDirectory)
                 && File.Exists(Path.Combine(selected.OutputDirectory, "resolved-brief.json"));
-            target.Text = selected is null ? "右の生成履歴から、改善したいゲームを選んでください。"
-                : $"対象: {Path.GetFileName(selected.OutputDirectory)}\n{selected.Format}";
+            target.Text = selected is null ? "右の生成履歴から、改善したいモックを選んでください。"
+                : $"対象: {Path.GetFileName(selected.OutputDirectory)}\n{DescribeKind(selected.Kind)} · {selected.Format}";
             if (selected is not null && !available)
             {
-                target.Text += "\n生成完了したゲームと成果物が必要です。";
+                target.Text += "\n生成完了したモックと成果物が必要です。";
             }
             appliedFeedback.Text = string.IsNullOrEmpty(selected?.AppliedFeedback) ? string.Empty
                 : $"この版に反映した感想:\n{selected.AppliedFeedback}";
@@ -100,6 +101,16 @@ public sealed class FeedbackEditor : IDisposable
         subscriptions.Dispose();
     }
 
+    private string DescribeKind(MockKind kind)
+    {
+        return kind switch
+        {
+            MockKind.Game => "ゲーム",
+            MockKind.Service => "サービス",
+            _ => "ゲーミフィケーション"
+        };
+    }
+
     private void SetEvent()
     {
         subscriptions.Add(Changes.Merge(ModeChanges).Subscribe(_ => RefreshAvailability()));
@@ -110,7 +121,7 @@ public sealed class FeedbackEditor : IDisposable
         feedback.IsEnabled = !busy && available;
         refine.IsEnabled = !busy && available && !string.IsNullOrWhiteSpace(Feedback);
         refine.IsVisible = !busy && IsRefining;
-        generate.IsVisible = !busy && !IsRefining;
+        generate.IsVisible = !busy && tabs.SelectedIndex == 0;
         format.IsEnabled = !busy && !IsRefining;
     }
 }

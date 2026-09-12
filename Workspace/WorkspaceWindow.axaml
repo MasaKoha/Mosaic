@@ -1,17 +1,22 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="GameMockStudio.Workspace.WorkspaceWindow"
-        Title="Game Mock Studio" Width="1440" Height="940" MinWidth="1140" MinHeight="720">
+        Title="Mosaic — モックスタジオ" Width="1440" Height="940" MinWidth="1140" MinHeight="720">
   <Grid RowDefinitions="Auto,*,Auto" Margin="24">
     <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,0,0,20">
-      <StackPanel Spacing="5">
-        <TextBlock Classes="caption" Text="GAME MOCK STUDIO  /  IDEA TO PLAY" />
-        <TextBlock Text="思いついたところから、ゲームに。" FontSize="25" FontWeight="SemiBold" />
-        <TextBlock Classes="muted" Text="決めたい要素だけ入力。空欄はAIがランダムに決定します。「なし」は不採用の指定です。" />
+      <StackPanel Spacing="5" MaxWidth="750" HorizontalAlignment="Left">
+        <TextBlock Classes="caption" Text="MOSAIC  /  IDEA TO EXPERIENCE" />
+        <TextBlock x:Name="HeadingText" Text="思いついたところから、ゲームに。" FontSize="25" FontWeight="SemiBold" />
+        <TextBlock Classes="muted" TextWrapping="Wrap" Text="決めたい要素だけ入力。空欄はAIがランダムに決定します。「なし」は不採用の指定です。" />
       </StackPanel>
       <TextBlock x:Name="SaveStatusText" Grid.Row="1" Grid.ColumnSpan="2" Classes="muted" Margin="0,8,0,0"
                  Text="前回の入力を確認しています…" />
       <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+        <ComboBox x:Name="KindSelector" SelectedIndex="0" MinWidth="170" AutomationProperties.Name="企画の種類">
+          <ComboBoxItem Content="ゲーム" />
+          <ComboBoxItem Content="サービス" />
+          <ComboBoxItem Content="ゲーミフィケーション" />
+        </ComboBox>
         <Button x:Name="NewButton" Content="新しい企画" />
         <Button x:Name="LoadButton" Content="企画を開く" />
         <Button x:Name="SaveButton" Content="企画を保存" />
@@ -20,7 +25,7 @@
     <Grid Grid.Row="1" ColumnDefinitions="218,18,*,18,350">
       <Border Classes="card" Padding="12">
         <Grid RowDefinitions="Auto,Auto,*">
-          <TextBlock Classes="caption" Margin="8,4,0,8" Text="01  /  ゲームの設計" />
+          <TextBlock x:Name="PlanningLabelText" Classes="caption" Margin="8,4,0,8" Text="01  /  ゲームの設計" TextWrapping="Wrap" />
           <TextBlock x:Name="CompletionText" Grid.Row="1" Margin="8,0,0,14" Classes="muted" TextWrapping="Wrap" />
           <ListBox x:Name="CategoryList" Grid.Row="2" Background="Transparent" BorderThickness="0" />
         </Grid>
@@ -28,27 +33,43 @@
       <TabControl x:Name="EditorTabs" Grid.Column="2">
         <TabItem Header="企画をつくる">
           <Grid RowDefinitions="Auto,*" Margin="0,12,0,0">
-            <TextBox x:Name="SearchBox" PlaceholderText="項目を検索  —  世界観、カメラ、難易度…" Margin="0,0,0,14" />
+            <TextBox x:Name="SearchBox" PlaceholderText="項目を検索" Margin="0,0,0,14" />
             <ScrollViewer x:Name="EditorScroll" Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
               <StackPanel x:Name="EditorHost" Spacing="12" Margin="0,0,8,0" />
             </ScrollViewer>
           </Grid>
         </TabItem>
-        <TabItem Header="ゲームの感想">
+        <TabItem Header="モックの感想">
           <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="16" Margin="0,16,8,0">
-              <TextBlock Text="遊んだ感想から、もう一歩。" FontSize="22" FontWeight="SemiBold" />
-              <TextBlock Classes="muted" Text="右の生成履歴でゲームを選び、よかった点や変えたい点を書いてください。元のゲームを残して改善版を作ります。" TextWrapping="Wrap" />
+              <TextBlock Text="使った感想から、もう一歩。" FontSize="22" FontWeight="SemiBold" />
+              <TextBlock Classes="muted" Text="右の生成履歴でモックを選び、よかった点や変えたい点を書いてください。元のモックを残して改善版を作ります。" TextWrapping="Wrap" />
               <Border Classes="card" Padding="14">
                 <TextBlock x:Name="FeedbackTargetText" TextWrapping="Wrap" />
               </Border>
-              <TextBlock Text="遊んだ感想・改善要望" FontWeight="SemiBold" />
+              <TextBlock Text="使った感想・改善要望" FontWeight="SemiBold" />
               <TextBox x:Name="FeedbackBox" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="260"
-                       AutomationProperties.Name="遊んだ感想・改善要望"
-                       PlaceholderText="例: 操作は気持ちよかった。序盤が難しいので最初は少しゆっくりにしてほしい。クリア時の達成感を強くしたい。"
+                       AutomationProperties.Name="使った感想・改善要望"
+                       PlaceholderText="例: 最初の操作は分かりやすかった。結果がどう変わったか見えにくいので改善したい。試した仮説に対する気づきも書けます。"
                        ScrollViewer.VerticalScrollBarVisibility="Auto" />
-              <TextBlock Classes="muted" Text="感想はゲームごとに自動保存します。今回の要望を優先し、関係のない仕様は引き継ぎます。生成形式は選択したゲームと同じです。" TextWrapping="Wrap" />
+              <TextBlock Classes="muted" Text="感想はモックごとに自動保存します。今回の要望を優先し、関係のない仕様は引き継ぎます。種類と生成形式は選択したモックと同じです。" TextWrapping="Wrap" />
               <TextBlock x:Name="AppliedFeedbackText" Classes="muted" TextWrapping="Wrap" IsVisible="False" />
+            </StackPanel>
+          </ScrollViewer>
+        </TabItem>
+        <TabItem Header="アイデアを探す">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="20" Margin="0,16,8,0">
+              <TextBlock Text="次に何を作るか、ここから。" FontSize="22" FontWeight="SemiBold" />
+              <TextBlock Classes="muted" Text="上の種類を切り替え、検討の出発点を選びます。SNSにするか、困りごとを解決する道具にするか。ゲームならどの場面を変えられるか。案はすべて編集できます。" TextWrapping="Wrap" />
+              <TextBlock Text="検討の出発点" FontWeight="SemiBold" />
+              <ComboBox x:Name="IdeaSelector" HorizontalAlignment="Stretch" AutomationProperties.Name="検討の出発点" />
+              <Border Classes="card" Padding="20">
+                <TextBlock x:Name="IdeaDescriptionText" TextWrapping="Wrap" FontSize="16" LineHeight="28" />
+              </Border>
+              <TextBlock Classes="muted" Text="これらは効果が未検証の仮説です。誰のどんな場面を変えたいか、自分の観察に合わせて書き換えてください。サービスとゲーミフィケーションは、試し方と次の判断をまとめた検証メモも生成します。" TextWrapping="Wrap" />
+              <Button x:Name="ApplyIdeaButton" Classes="primary" Content="この案から新しい企画をつくる  →" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="12,14" />
+              <TextBlock Classes="muted" Text="現在の種類の企画を選んだ案に置き換えます。直前の入力は復旧フォルダへ退避します。他の種類の下書きは保持します。空欄のまま自由に企画を始めることもできます。" TextWrapping="Wrap" />
             </StackPanel>
           </ScrollViewer>
         </TabItem>
@@ -61,10 +82,10 @@
             <TextBlock Classes="caption" Text="02  /  モックを生成" />
             <TextBlock Text="Codex GPT-6  ·  xhigh" FontSize="20" FontWeight="SemiBold" />
             <TextBlock Classes="muted" Text="このPCのログイン済みCodex CLIで生成します。認証情報はアプリに保存しません。生成にはネット接続を使用します。" TextWrapping="Wrap" />
-            <TextBlock Text="新規生成するゲームの形式" Margin="0,6,0,0" />
+            <TextBlock Text="新規生成するモックの形式" Margin="0,6,0,0" />
             <ComboBox x:Name="FormatSelector" HorizontalAlignment="Stretch" SelectedIndex="0">
-              <ComboBoxItem Content="ブラウザゲーム（HTML）" />
-              <ComboBoxItem Content="Unity プロジェクト" />
+              <ComboBoxItem Content="ブラウザ（HTML）" />
+              <ComboBoxItem x:Name="UnityFormatItem" Content="Unity プロジェクト" />
               <ComboBoxItem Content="Avalonia プロジェクト" />
             </ComboBox>
             <TextBlock Text="出力先" />
@@ -114,7 +135,7 @@
                     HorizontalContentAlignment="Center" />
             <Grid ColumnDefinitions="*,*">
               <Button x:Name="OpenOutputButton" Content="成果物フォルダ" IsEnabled="False" HorizontalAlignment="Stretch" />
-              <Button x:Name="PlayButton" Grid.Column="1" Content="ゲームを開く" IsEnabled="False"
+              <Button x:Name="PlayButton" Grid.Column="1" Content="モックを開く" IsEnabled="False"
                       HorizontalAlignment="Stretch" Margin="6,0,0,0" />
             </Grid>
           </StackPanel>
