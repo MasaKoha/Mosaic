@@ -1,0 +1,1088 @@
+[
+  {
+    "Label": "01  コンセプト",
+    "Description": "誰に、どんな面白さを届けるか。",
+    "Fields": [
+      {
+        "Identifier": "title",
+        "Label": "タイトル",
+        "Description": "仮題でも可",
+        "Example": "例：星くず郵便局"
+      },
+      {
+        "Identifier": "pitch",
+        "Label": "一言コンセプト",
+        "Description": "何をするゲームか",
+        "Example": "例：星を渡って手紙を届ける配達ローグライト"
+      },
+      {
+        "Identifier": "fantasy",
+        "Label": "プレイヤー体験",
+        "Description": "プレイヤーがなりたい存在・味わいたい感覚",
+        "Example": "例：未知の世界を開拓する船長"
+      },
+      {
+        "Identifier": "pillars",
+        "Label": "面白さの柱",
+        "Description": "体験を支える設計原則",
+        "Example": "例：探索・発見・選択の後悔"
+      },
+      {
+        "Identifier": "unique_hook",
+        "Label": "独自の特徴",
+        "Description": "他作品と違う仕掛け・売り",
+        "Example": "例：時間を通貨として使う"
+      },
+      {
+        "Identifier": "emotions",
+        "Label": "感情の流れ",
+        "Description": "緊張・達成感などの配分",
+        "Example": "例：安心→不穏→解放"
+      },
+      {
+        "Identifier": "references",
+        "Label": "参考作品",
+        "Description": "参考にする点と避ける点まで指定",
+        "Example": "例：探索の自由度だけ参考にする"
+      },
+      {
+        "Identifier": "audience",
+        "Label": "対象プレイヤー",
+        "Description": "経験・嗜好・想定年齢",
+        "Example": "例：短時間で遊びたい中級者"
+      },
+      {
+        "Identifier": "rating",
+        "Label": "表現の対象年齢",
+        "Description": "暴力・恐怖・性的表現の程度",
+        "Example": "例：全年齢、流血なし"
+      },
+      {
+        "Identifier": "motivation",
+        "Label": "継続する動機",
+        "Description": "次も遊びたいと思う理由",
+        "Example": "例：未知の島と図鑑の収集"
+      }
+    ]
+  },
+  {
+    "Label": "02  世界観",
+    "Description": "舞台のルールと、そこに暮らす存在。",
+    "Fields": [
+      {
+        "Identifier": "world_theme",
+        "Label": "世界のテーマ",
+        "Description": "世界を象徴する題材",
+        "Example": "例：海上都市と失われた文明"
+      },
+      {
+        "Identifier": "era",
+        "Label": "時代・文明水準",
+        "Description": "歴史・技術・魔法の発展段階",
+        "Example": "例：蒸気機関と錬金術の時代"
+      },
+      {
+        "Identifier": "location",
+        "Label": "舞台・地理",
+        "Description": "地域・気候・生態系",
+        "Example": "例：永久凍土の地下集落"
+      },
+      {
+        "Identifier": "world_rules",
+        "Label": "世界の法則",
+        "Description": "物理・魔法・禁忌のルール",
+        "Example": "例：嘘をつくと重力が反転する"
+      },
+      {
+        "Identifier": "culture",
+        "Label": "社会・文化",
+        "Description": "政治・宗教・慣習・生活",
+        "Example": "例：記憶を売買する商人社会"
+      },
+      {
+        "Identifier": "history",
+        "Label": "歴史・背景",
+        "Description": "現在の状況を生んだ過去",
+        "Example": "例：太陽が消えてから100年"
+      },
+      {
+        "Identifier": "factions",
+        "Label": "勢力と関係",
+        "Description": "組織・敵対・協力関係",
+        "Example": "例：空賊と郵便組合の停戦"
+      },
+      {
+        "Identifier": "inhabitants",
+        "Label": "種族・生物",
+        "Description": "登場する人々や生態",
+        "Example": "例：機械仕掛けの鳥と旅人"
+      },
+      {
+        "Identifier": "world_mood",
+        "Label": "世界の雰囲気",
+        "Description": "明暗・温度感・ユーモア",
+        "Example": "例：寂しいが温かい"
+      },
+      {
+        "Identifier": "world_scale",
+        "Label": "世界の広さ",
+        "Description": "物語や探索の地理的範囲",
+        "Example": "例：小さな島ひとつ"
+      }
+    ]
+  },
+  {
+    "Label": "03  物語とキャラクター",
+    "Description": "物語なしも指定可能。空欄は採否を含めAIが決めます。",
+    "Fields": [
+      {
+        "Identifier": "protagonist",
+        "Label": "主人公",
+        "Description": "役割・能力・性格・背景",
+        "Example": "例：方向音痴の新人配達員"
+      },
+      {
+        "Identifier": "character_goal",
+        "Label": "主人公の目的",
+        "Description": "動機と欲しいもの",
+        "Example": "例：行方不明の師匠を探す"
+      },
+      {
+        "Identifier": "conflict",
+        "Label": "対立と障害",
+        "Description": "目的達成を阻むもの",
+        "Example": "例：地図を独占する王国"
+      },
+      {
+        "Identifier": "story_structure",
+        "Label": "物語の構造",
+        "Description": "一本道・分岐・環境語りなど",
+        "Example": "例：1話完結の依頼形式"
+      },
+      {
+        "Identifier": "story_arc",
+        "Label": "導入・展開・結末",
+        "Description": "モックに含める物語範囲",
+        "Example": "例：最初の配達と謎の手紙"
+      },
+      {
+        "Identifier": "supporting_cast",
+        "Label": "仲間・主要人物",
+        "Description": "関係性・役割・掛け合い",
+        "Example": "例：口うるさいドローン"
+      },
+      {
+        "Identifier": "antagonist",
+        "Label": "敵役",
+        "Description": "敵の目的とプレイヤーとの関係",
+        "Example": "例：配達を妨害する気象機械"
+      },
+      {
+        "Identifier": "dialogue",
+        "Label": "会話・選択肢",
+        "Description": "文体・量・選択の影響",
+        "Example": "例：短い選択肢で信頼度が変わる"
+      },
+      {
+        "Identifier": "character_growth",
+        "Label": "人物の変化",
+        "Description": "物語上の成長と関係変化",
+        "Example": "例：他人を頼れるようになる"
+      },
+      {
+        "Identifier": "narrative_density",
+        "Label": "物語の密度",
+        "Description": "プレイと物語の比率",
+        "Example": "例：会話10%、操作90%"
+      }
+    ]
+  },
+  {
+    "Label": "04  コアループとルール",
+    "Description": "操作から報酬まで、繰り返したくなる一周を定義。",
+    "Fields": [
+      {
+        "Identifier": "core_loop",
+        "Label": "基本の繰り返し",
+        "Description": "行動→結果→報酬→次の行動",
+        "Example": "例：探索→回収→帰還→船を強化"
+      },
+      {
+        "Identifier": "primary_verbs",
+        "Label": "主な行動",
+        "Description": "プレイヤーが実際に行う動詞",
+        "Example": "例：跳ぶ・掴む・投げる"
+      },
+      {
+        "Identifier": "short_goal",
+        "Label": "短期目標",
+        "Description": "数秒〜数分の目標",
+        "Example": "例：次の安全地帯にたどり着く"
+      },
+      {
+        "Identifier": "long_goal",
+        "Label": "長期目標",
+        "Description": "1プレイ全体の目標",
+        "Example": "例：3つの灯台を修理する"
+      },
+      {
+        "Identifier": "win_condition",
+        "Label": "成功・勝利条件",
+        "Description": "成功を判定する具体的条件",
+        "Example": "例：制限時間内に荷物を3個届ける"
+      },
+      {
+        "Identifier": "lose_condition",
+        "Label": "失敗・敗北条件",
+        "Description": "失敗条件と再挑戦",
+        "Example": "例：燃料切れで帰港"
+      },
+      {
+        "Identifier": "rules",
+        "Label": "基本ルール",
+        "Description": "必須の制約と例外",
+        "Example": "例：荷物は一度に2個まで"
+      },
+      {
+        "Identifier": "risk_reward",
+        "Label": "リスクと報酬",
+        "Description": "安全策と挑戦の選択",
+        "Example": "例：嵐の航路は報酬2倍"
+      },
+      {
+        "Identifier": "resources",
+        "Label": "管理する資源",
+        "Description": "体力・時間・弾薬など",
+        "Example": "例：酸素・電力・積載量"
+      },
+      {
+        "Identifier": "feedback",
+        "Label": "行動の手応え",
+        "Description": "操作への視覚・音・振動応答",
+        "Example": "例：命中時に短い停止と火花"
+      }
+    ]
+  },
+  {
+    "Label": "05  操作とカメラ",
+    "Description": "遊ぶ端末と操作感を合わせます。",
+    "Fields": [
+      {
+        "Identifier": "input_devices",
+        "Label": "入力デバイス",
+        "Description": "キーボード・パッド・タッチなど",
+        "Example": "例：マウスだけで完結"
+      },
+      {
+        "Identifier": "control_scheme",
+        "Label": "操作割り当て",
+        "Description": "移動・決定・アクションの割当",
+        "Example": "例：WASD移動、Space回避"
+      },
+      {
+        "Identifier": "movement",
+        "Label": "移動の感触",
+        "Description": "速度・慣性・加速度・ジャンプ",
+        "Example": "例：低重力で滑らかな慣性"
+      },
+      {
+        "Identifier": "aiming",
+        "Label": "照準・対象選択",
+        "Description": "手動・自動・ロックオン",
+        "Example": "例：最寄りの敵へ自動照準"
+      },
+      {
+        "Identifier": "camera",
+        "Label": "カメラ視点",
+        "Description": "俯瞰・横・一人称・固定など",
+        "Example": "例：斜め見下ろし固定"
+      },
+      {
+        "Identifier": "camera_behavior",
+        "Label": "カメラの挙動",
+        "Description": "追従・ズーム・画面揺れ",
+        "Example": "例：少し遅れて追従、揺れ控えめ"
+      },
+      {
+        "Identifier": "interaction",
+        "Label": "調べる・使う操作",
+        "Description": "対象への働きかけ方",
+        "Example": "例：近づいてEキー"
+      },
+      {
+        "Identifier": "input_assistance",
+        "Label": "操作支援",
+        "Description": "バッファ・猶予・自動操作",
+        "Example": "例：ジャンプのコヨーテタイム"
+      }
+    ]
+  },
+  {
+    "Label": "06  戦闘と敵AI",
+    "Description": "戦闘なしも明示できます。",
+    "Fields": [
+      {
+        "Identifier": "combat_style",
+        "Label": "戦闘方式",
+        "Description": "リアルタイム・ターン制・戦闘なし",
+        "Example": "例：短いターン制バトル"
+      },
+      {
+        "Identifier": "attacks",
+        "Label": "攻撃手段",
+        "Description": "近接・遠距離・範囲・属性",
+        "Example": "例：跳ね返る弾と突進"
+      },
+      {
+        "Identifier": "skills",
+        "Label": "スキル・能力",
+        "Description": "発動条件・効果・組合せ",
+        "Example": "例：時間停止を3秒使える"
+      },
+      {
+        "Identifier": "defense",
+        "Label": "防御・回避",
+        "Description": "被害を避ける判断と操作",
+        "Example": "例：方向指定のパリィ"
+      },
+      {
+        "Identifier": "combat_resources",
+        "Label": "戦闘資源",
+        "Description": "消費と回復・クールダウン",
+        "Example": "例：攻撃で熱が上がる"
+      },
+      {
+        "Identifier": "enemy_roles",
+        "Label": "敵の種類",
+        "Description": "雑魚・支援・エリートの役割",
+        "Example": "例：追跡役と砲撃役"
+      },
+      {
+        "Identifier": "enemy_behavior",
+        "Label": "敵の行動",
+        "Description": "索敵・判断・連携・予告",
+        "Example": "例：攻撃前に床が赤くなる"
+      },
+      {
+        "Identifier": "bosses",
+        "Label": "ボス戦",
+        "Description": "フェーズ・攻略・弱点",
+        "Example": "例：装甲を壊して核を攻撃"
+      },
+      {
+        "Identifier": "damage_rules",
+        "Label": "ダメージ計算",
+        "Description": "相性・状態異常・数値ルール",
+        "Example": "例：濡れた敵に雷が連鎖"
+      }
+    ]
+  },
+  {
+    "Label": "07  探索とレベル",
+    "Description": "空間、遭遇、進行経路を組み立てます。",
+    "Fields": [
+      {
+        "Identifier": "level_structure",
+        "Label": "ステージ構造",
+        "Description": "一本道・分岐・オープン・部屋制",
+        "Example": "例：中央拠点から3つの小島へ"
+      },
+      {
+        "Identifier": "level_generation",
+        "Label": "マップ生成方式",
+        "Description": "固定・手続き生成・混合",
+        "Example": "例：固定部屋のランダム接続"
+      },
+      {
+        "Identifier": "biomes",
+        "Label": "地形・バイオーム",
+        "Description": "環境の種類とプレイへの影響",
+        "Example": "例：滑る氷原と風の強い崖"
+      },
+      {
+        "Identifier": "exploration_rewards",
+        "Label": "発見の報酬",
+        "Description": "探索で得る情報や物",
+        "Example": "例：ショートカットと古い日誌"
+      },
+      {
+        "Identifier": "gating",
+        "Label": "進行制限",
+        "Description": "鍵・能力・順番の制約",
+        "Example": "例：二段ジャンプで新エリア解放"
+      },
+      {
+        "Identifier": "hazards",
+        "Label": "罠・障害物",
+        "Description": "環境による危険",
+        "Example": "例：周期的な落雷"
+      },
+      {
+        "Identifier": "puzzles",
+        "Label": "謎解き",
+        "Description": "考えるルールとヒント",
+        "Example": "例：鏡で光を導く"
+      },
+      {
+        "Identifier": "events",
+        "Label": "遭遇イベント",
+        "Description": "固定・ランダムの出来事",
+        "Example": "例：遭難者の救助"
+      },
+      {
+        "Identifier": "checkpoints",
+        "Label": "チェックポイント",
+        "Description": "復帰地点と巻き戻る範囲",
+        "Example": "例：部屋の入口から再開"
+      },
+      {
+        "Identifier": "navigation",
+        "Label": "道案内・マップ",
+        "Description": "迷い方と案内の強さ",
+        "Example": "例：地図なし、灯りで誘導"
+      }
+    ]
+  },
+  {
+    "Label": "08  成長と収集",
+    "Description": "一周の中と、繰り返し遊んだ先の変化。",
+    "Fields": [
+      {
+        "Identifier": "progression",
+        "Label": "成長方式",
+        "Description": "レベル・装備・習熟・成長なし",
+        "Example": "例：装備だけで強くなる"
+      },
+      {
+        "Identifier": "stats",
+        "Label": "能力値",
+        "Description": "使うパラメータと意味",
+        "Example": "例：速度・運搬量・耐久"
+      },
+      {
+        "Identifier": "skill_tree",
+        "Label": "能力解放",
+        "Description": "分岐と獲得条件",
+        "Example": "例：毎周3択から1つ選ぶ"
+      },
+      {
+        "Identifier": "builds",
+        "Label": "ビルドの多様性",
+        "Description": "組合せと相乗効果",
+        "Example": "例：燃焼と風で範囲が広がる"
+      },
+      {
+        "Identifier": "items",
+        "Label": "アイテム・装備",
+        "Description": "種類・効果・希少度",
+        "Example": "例：移動方法が変わる靴"
+      },
+      {
+        "Identifier": "inventory",
+        "Label": "持ち物管理",
+        "Description": "枠・重さ・整理・使用",
+        "Example": "例：6枠で取捨選択"
+      },
+      {
+        "Identifier": "crafting",
+        "Label": "クラフト・合成",
+        "Description": "レシピ・素材・試行錯誤",
+        "Example": "例：拾った部品で船を修理"
+      },
+      {
+        "Identifier": "collection",
+        "Label": "収集・図鑑",
+        "Description": "集める対象と達成報酬",
+        "Example": "例：未知の星座を記録"
+      },
+      {
+        "Identifier": "meta_progression",
+        "Label": "周回をまたぐ成長",
+        "Description": "永続強化・解放・引継ぎ",
+        "Example": "例：新しい開始装備を解放"
+      },
+      {
+        "Identifier": "quests",
+        "Label": "クエスト・実績",
+        "Description": "課題の提示と達成記録",
+        "Example": "例：荷物を傷つけず配達"
+      }
+    ]
+  },
+  {
+    "Label": "09  経済とシミュレーション",
+    "Description": "必要な仕組みだけをモックへ落とし込みます。",
+    "Fields": [
+      {
+        "Identifier": "currencies",
+        "Label": "通貨",
+        "Description": "通貨の種類と用途",
+        "Example": "例：コイン1種類のみ"
+      },
+      {
+        "Identifier": "sources_sinks",
+        "Label": "収入と支出",
+        "Description": "資源が生まれる・消える場所",
+        "Example": "例：配達報酬で燃料を補給"
+      },
+      {
+        "Identifier": "shops",
+        "Label": "店と取引",
+        "Description": "価格・品揃え・売買",
+        "Example": "例：帰港ごとに品揃え更新"
+      },
+      {
+        "Identifier": "production",
+        "Label": "生産・物流",
+        "Description": "加工・供給・在庫の流れ",
+        "Example": "例：採掘→精錬→建設"
+      },
+      {
+        "Identifier": "building",
+        "Label": "建築・配置",
+        "Description": "自由度・制約・影響範囲",
+        "Example": "例：グリッド上に基地建設"
+      },
+      {
+        "Identifier": "simulation",
+        "Label": "シミュレーション",
+        "Description": "日夜・天候・住人・物理",
+        "Example": "例：雨で水位が変化"
+      },
+      {
+        "Identifier": "balancing",
+        "Label": "数値バランス",
+        "Description": "増加曲線・上限・制約",
+        "Example": "例：最初の強化は2回の配達で購入"
+      },
+      {
+        "Identifier": "monetization",
+        "Label": "収益モデル",
+        "Description": "買い切り・広告・課金・なし",
+        "Example": "例：買い切り想定、決済はモック"
+      }
+    ]
+  },
+  {
+    "Label": "10  時間と難易度",
+    "Description": "短いモックでも体験のリズムを作ります。",
+    "Fields": [
+      {
+        "Identifier": "session_length",
+        "Label": "1プレイの長さ",
+        "Description": "開始から区切りまで",
+        "Example": "例：3〜5分"
+      },
+      {
+        "Identifier": "pace",
+        "Label": "テンポ",
+        "Description": "忙しさ・休憩・戦闘頻度",
+        "Example": "例：30秒の緊張と10秒の休憩"
+      },
+      {
+        "Identifier": "time_rules",
+        "Label": "時間の扱い",
+        "Description": "リアルタイム・ターン・停止",
+        "Example": "例：選択中は時間停止"
+      },
+      {
+        "Identifier": "difficulty",
+        "Label": "難易度",
+        "Description": "想定スキルと難しさ",
+        "Example": "例：初回でも半数がクリア"
+      },
+      {
+        "Identifier": "scaling",
+        "Label": "難易度の変化",
+        "Description": "段階・適応・ランダム性",
+        "Example": "例：部屋ごとに敵が1体増える"
+      },
+      {
+        "Identifier": "failure_cost",
+        "Label": "失敗時の損失",
+        "Description": "進捗・資源・時間の失い方",
+        "Example": "例：その周回の資源だけ失う"
+      },
+      {
+        "Identifier": "retry",
+        "Label": "再挑戦の流れ",
+        "Description": "復帰速度とやり直す範囲",
+        "Example": "例：ワンクリックで即再開"
+      },
+      {
+        "Identifier": "randomness",
+        "Label": "運と実力の比率",
+        "Description": "不確実性の範囲",
+        "Example": "例：配置はランダム、攻撃は予測可能"
+      }
+    ]
+  },
+  {
+    "Label": "11  人数とソーシャル",
+    "Description": "オンライン機能はモック範囲も別途指定できます。",
+    "Fields": [
+      {
+        "Identifier": "player_count",
+        "Label": "プレイ人数",
+        "Description": "最小・最大人数",
+        "Example": "例：1人"
+      },
+      {
+        "Identifier": "play_mode",
+        "Label": "協力・対戦方式",
+        "Description": "ソロ・協力・PvP・非同期",
+        "Example": "例：2人協力"
+      },
+      {
+        "Identifier": "connection",
+        "Label": "接続方式",
+        "Description": "ローカル・オンライン・疑似通信",
+        "Example": "例：同一PCのローカル協力"
+      },
+      {
+        "Identifier": "roles",
+        "Label": "役割分担",
+        "Description": "対称・非対称・職業",
+        "Example": "例：操縦役と修理役"
+      },
+      {
+        "Identifier": "matching",
+        "Label": "部屋・マッチング",
+        "Description": "参加と退出・待機",
+        "Example": "例：招待コードのUIのみ"
+      },
+      {
+        "Identifier": "communication",
+        "Label": "コミュニケーション",
+        "Description": "チャット・ピン・スタンプ",
+        "Example": "例：定型ピン4種類"
+      },
+      {
+        "Identifier": "competition",
+        "Label": "ランキング・競争",
+        "Description": "順位・評価・比較",
+        "Example": "例：ローカルのハイスコア"
+      },
+      {
+        "Identifier": "social_safety",
+        "Label": "ソーシャル上の制約",
+        "Description": "通報・ブロック・情報公開",
+        "Example": "例：自由文チャットなし"
+      }
+    ]
+  },
+  {
+    "Label": "12  ビジュアル",
+    "Description": "絵作りと情報の読みやすさ。",
+    "Fields": [
+      {
+        "Identifier": "dimensions",
+        "Label": "2D・3D表現",
+        "Description": "空間と描画の方式",
+        "Example": "例：2Dスプライト"
+      },
+      {
+        "Identifier": "art_style",
+        "Label": "画風",
+        "Description": "ピクセル・手描き・ローポリなど",
+        "Example": "例：温かい手描き絵本"
+      },
+      {
+        "Identifier": "palette",
+        "Label": "配色",
+        "Description": "基調色・差し色・明暗",
+        "Example": "例：濃紺とミント、警告は珊瑚色"
+      },
+      {
+        "Identifier": "shape_language",
+        "Label": "形状の統一",
+        "Description": "輪郭・比率・シルエット",
+        "Example": "例：味方は丸、敵は尖った形"
+      },
+      {
+        "Identifier": "characters_visual",
+        "Label": "キャラクター表現",
+        "Description": "等身・衣装・表情",
+        "Example": "例：2頭身の小さな宇宙飛行士"
+      },
+      {
+        "Identifier": "environment_visual",
+        "Label": "背景と環境",
+        "Description": "密度・奥行き・照明",
+        "Example": "例：余白の多い星空"
+      },
+      {
+        "Identifier": "animation",
+        "Label": "アニメーション",
+        "Description": "動作・遷移・質感",
+        "Example": "例：弾む歩行と伸縮する着地"
+      },
+      {
+        "Identifier": "effects",
+        "Label": "エフェクト",
+        "Description": "粒子・残像・画面効果",
+        "Example": "例：小さな光粒子、点滅なし"
+      },
+      {
+        "Identifier": "asset_policy",
+        "Label": "素材の方針",
+        "Description": "自作・図形・支給素材・ライセンス",
+        "Example": "例：図形と自作SVGのみ"
+      },
+      {
+        "Identifier": "visual_references",
+        "Label": "視覚資料",
+        "Description": "参照URL・ローカル資料の場所",
+        "Example": "例：資料の配色だけ参考にする"
+      }
+    ]
+  },
+  {
+    "Label": "13  サウンド",
+    "Description": "音が必要かどうかも指定できます。",
+    "Fields": [
+      {
+        "Identifier": "music",
+        "Label": "音楽",
+        "Description": "ジャンル・編成・雰囲気",
+        "Example": "例：静かなアンビエント"
+      },
+      {
+        "Identifier": "music_dynamics",
+        "Label": "音楽の変化",
+        "Description": "場面・危険・進行に応じた変化",
+        "Example": "例：敵が近づくと低音を追加"
+      },
+      {
+        "Identifier": "sound_effects",
+        "Label": "効果音",
+        "Description": "行動・成功・警告の音",
+        "Example": "例：柔らかい電子音"
+      },
+      {
+        "Identifier": "ambience",
+        "Label": "環境音",
+        "Description": "場所の空気感",
+        "Example": "例：風と機械の小さな駆動音"
+      },
+      {
+        "Identifier": "voice",
+        "Label": "ボイス",
+        "Description": "有無・言語・擬似音声",
+        "Example": "例：なし"
+      },
+      {
+        "Identifier": "audio_controls",
+        "Label": "音量設定",
+        "Description": "カテゴリ別音量と初期状態",
+        "Example": "例：BGMとSEを別々に調整"
+      }
+    ]
+  },
+  {
+    "Label": "14  UIと画面遷移",
+    "Description": "遊び始めから結果、再挑戦まで。",
+    "Fields": [
+      {
+        "Identifier": "screens",
+        "Label": "必要な画面",
+        "Description": "タイトル・ゲーム・結果・設定など",
+        "Example": "例：タイトル→プレイ→結果"
+      },
+      {
+        "Identifier": "hud",
+        "Label": "プレイ中の情報",
+        "Description": "常時表示と優先順位",
+        "Example": "例：酸素・荷物数・目的地"
+      },
+      {
+        "Identifier": "ui_style",
+        "Label": "UIの見た目",
+        "Description": "装飾・質感・配置",
+        "Example": "例：船内計器風のミニマルUI"
+      },
+      {
+        "Identifier": "layout",
+        "Label": "画面レイアウト",
+        "Description": "安全領域・密度・左右配置",
+        "Example": "例：左上に状態、右下に操作"
+      },
+      {
+        "Identifier": "menus",
+        "Label": "メニュー構造",
+        "Description": "階層・戻る・決定の流れ",
+        "Example": "例：一時停止から設定と再開"
+      },
+      {
+        "Identifier": "tutorial",
+        "Label": "チュートリアル",
+        "Description": "導入・ヒント・練習",
+        "Example": "例：最初の30秒で操作を体験"
+      },
+      {
+        "Identifier": "notifications",
+        "Label": "通知",
+        "Description": "報酬・失敗・発見の提示",
+        "Example": "例：操作を遮らない短い通知"
+      },
+      {
+        "Identifier": "results",
+        "Label": "リザルト",
+        "Description": "振り返りと次の行動",
+        "Example": "例：配達評価とリトライ"
+      },
+      {
+        "Identifier": "settings",
+        "Label": "設定項目",
+        "Description": "操作・音・画面・難易度",
+        "Example": "例：音量と揺れのON/OFF"
+      },
+      {
+        "Identifier": "ui_copy",
+        "Label": "文体・用語",
+        "Description": "語調と表記の統一",
+        "Example": "例：短く親しみやすい日本語"
+      }
+    ]
+  },
+  {
+    "Label": "15  アクセシビリティと言語",
+    "Description": "使える操作と読める情報を確保します。",
+    "Fields": [
+      {
+        "Identifier": "languages",
+        "Label": "対応言語",
+        "Description": "初期言語と翻訳範囲",
+        "Example": "例：日本語のみ"
+      },
+      {
+        "Identifier": "text_readability",
+        "Label": "文字の読みやすさ",
+        "Description": "文字サイズ・速度・背景",
+        "Example": "例：18px以上、会話は即時表示"
+      },
+      {
+        "Identifier": "color_accessibility",
+        "Label": "色覚対応",
+        "Description": "色以外の識別手段",
+        "Example": "例：色とアイコンを併用"
+      },
+      {
+        "Identifier": "motion_accessibility",
+        "Label": "動き・点滅",
+        "Description": "揺れ・フラッシュ・軽減設定",
+        "Example": "例：画面点滅なし"
+      },
+      {
+        "Identifier": "motor_accessibility",
+        "Label": "操作の負担",
+        "Description": "連打・長押し・同時押し",
+        "Example": "例：連打不要、片手操作"
+      },
+      {
+        "Identifier": "hearing_accessibility",
+        "Label": "音の代替",
+        "Description": "字幕・方向表示・視覚警告",
+        "Example": "例：警告音にアイコンを併記"
+      },
+      {
+        "Identifier": "assistance_modes",
+        "Label": "補助モード",
+        "Description": "時間延長・無敵・自動操作",
+        "Example": "例：ゲーム速度を半分にできる"
+      }
+    ]
+  },
+  {
+    "Label": "16  技術と動作環境",
+    "Description": "本体とは別に、生成するゲームの条件を指定。",
+    "Fields": [
+      {
+        "Identifier": "target_platform",
+        "Label": "想定プラットフォーム",
+        "Description": "PC・スマホ・Webなど",
+        "Example": "例：PCブラウザ"
+      },
+      {
+        "Identifier": "orientation",
+        "Label": "画面方向・比率",
+        "Description": "横・縦・可変",
+        "Example": "例：横16:9"
+      },
+      {
+        "Identifier": "resolution",
+        "Label": "解像度",
+        "Description": "基準サイズと可変対応",
+        "Example": "例：1280×720、ウィンドウ可変"
+      },
+      {
+        "Identifier": "frame_rate",
+        "Label": "目標フレームレート",
+        "Description": "動作目標",
+        "Example": "例：60fps"
+      },
+      {
+        "Identifier": "performance_budget",
+        "Label": "性能制約",
+        "Description": "描画量・メモリ・読み込み",
+        "Example": "例：一般的なノートPCで軽快"
+      },
+      {
+        "Identifier": "engine_version",
+        "Label": "エンジン・依存条件",
+        "Description": "生成形式に合ったバージョン指定",
+        "Example": "例：外部ライブラリなし"
+      },
+      {
+        "Identifier": "save_system",
+        "Label": "セーブ",
+        "Description": "保存内容・タイミング・スロット",
+        "Example": "例：音量とハイスコアを保存"
+      },
+      {
+        "Identifier": "network_requirements",
+        "Label": "通信要件",
+        "Description": "オフライン動作・接続制約",
+        "Example": "例：完全オフライン"
+      },
+      {
+        "Identifier": "external_services",
+        "Label": "外部サービス",
+        "Description": "認証・決済・分析等の扱い",
+        "Example": "例：すべてローカルのダミー"
+      },
+      {
+        "Identifier": "technical_constraints",
+        "Label": "その他の技術制約",
+        "Description": "禁止依存・容量・実装方式",
+        "Example": "例：ビルド不要で起動"
+      }
+    ]
+  },
+  {
+    "Label": "17  モックの範囲と評価",
+    "Description": "どこまで作り、何を確かめるか。",
+    "Fields": [
+      {
+        "Identifier": "validation_goal",
+        "Label": "検証したい仮説",
+        "Description": "モックで判断する面白さ",
+        "Example": "例：慣性移動だけで楽しいか"
+      },
+      {
+        "Identifier": "fidelity",
+        "Label": "作り込みの程度",
+        "Description": "ワイヤー・操作試作・見た目重視",
+        "Example": "例：実際に遊べる縦切り試作"
+      },
+      {
+        "Identifier": "must_have",
+        "Label": "必須機能",
+        "Description": "今回確実に動かすもの",
+        "Example": "例：移動・配達・時間制限・再挑戦"
+      },
+      {
+        "Identifier": "out_of_scope",
+        "Label": "今回作らないもの",
+        "Description": "意図的に除く仕様",
+        "Example": "例：ネット対戦と課金"
+      },
+      {
+        "Identifier": "content_budget",
+        "Label": "コンテンツ量",
+        "Description": "ステージ・敵・道具・会話の数",
+        "Example": "例：1ステージ、敵3種、道具2種"
+      },
+      {
+        "Identifier": "mocked_features",
+        "Label": "疑似実装の対象",
+        "Description": "本物とダミーを区別",
+        "Example": "例：ランキングは固定データ"
+      },
+      {
+        "Identifier": "acceptance",
+        "Label": "受け入れ条件",
+        "Description": "成功・失敗を判断する観測可能な条件",
+        "Example": "例：3分で開始→成功→再開を試せる"
+      },
+      {
+        "Identifier": "test_scenarios",
+        "Label": "確認シナリオ",
+        "Description": "正常系と失敗系",
+        "Example": "例：勝利・時間切れ・連続リトライ"
+      },
+      {
+        "Identifier": "debug_tools",
+        "Label": "検証用操作",
+        "Description": "状態表示・スキップ・値の調整",
+        "Example": "例：残り時間を調整できる"
+      },
+      {
+        "Identifier": "priorities",
+        "Label": "優先順位",
+        "Description": "品質・速さ・量の優先関係",
+        "Example": "例：操作感、可読性、見た目の順"
+      }
+    ]
+  },
+  {
+    "Label": "18  制作条件と追加指定",
+    "Description": "既存項目に収まらない条件も取り込めます。",
+    "Fields": [
+      {
+        "Identifier": "team_constraints",
+        "Label": "制作体制",
+        "Description": "人数・得意分野・保守条件",
+        "Example": "例：1人で拡張できる規模"
+      },
+      {
+        "Identifier": "production_budget",
+        "Label": "制作の時間・予算",
+        "Description": "完成版を想定した規模の制約",
+        "Example": "例：個人制作で3か月"
+      },
+      {
+        "Identifier": "release_plan",
+        "Label": "配布・公開の想定",
+        "Description": "対象ストア・配布方法",
+        "Example": "例：イベント会場で体験"
+      },
+      {
+        "Identifier": "operations",
+        "Label": "運用・更新",
+        "Description": "追加コンテンツと継続運営の有無",
+        "Example": "例：運営なし"
+      },
+      {
+        "Identifier": "analytics",
+        "Label": "評価指標",
+        "Description": "何を記録・観察するか",
+        "Example": "例：クリア時間と失敗回数"
+      },
+      {
+        "Identifier": "privacy",
+        "Label": "データとプライバシー",
+        "Description": "扱う個人情報と保存範囲",
+        "Example": "例：個人情報を収集しない"
+      },
+      {
+        "Identifier": "rights",
+        "Label": "権利・使用条件",
+        "Description": "素材・名称・参考作品の制約",
+        "Example": "例：既存作品の名称や素材は使わない"
+      },
+      {
+        "Identifier": "forbidden",
+        "Label": "避けたい要素",
+        "Description": "テーマ・仕組み・演出の禁止",
+        "Example": "例：ホラー、反射神経、ガチャ"
+      },
+      {
+        "Identifier": "additional",
+        "Label": "追加の企画項目・特徴",
+        "Description": "項目名と内容を自由に追加",
+        "Example": "例：天気連動：雨の日はNPCの会話が変わる"
+      }
+    ]
+  }
+]

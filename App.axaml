@@ -1,0 +1,30 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="GameMockStudio.App" Name="Game Mock Studio" RequestedThemeVariant="Dark">
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="Window">
+      <Setter Property="Background" Value="#101416" />
+      <Setter Property="FontFamily" Value="Hiragino Sans, Yu Gothic UI, Noto Sans CJK JP, sans-serif" />
+      <Setter Property="FontSize" Value="13" />
+    </Style>
+    <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="#A2B2B5" /></Style>
+    <Style Selector="TextBlock.caption">
+      <Setter Property="Foreground" Value="#74DCC0" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="#1A2226" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="18" />
+    </Style>
+    <Style Selector="TextBox"><Setter Property="CornerRadius" Value="6" /></Style>
+    <Style Selector="Button"><Setter Property="CornerRadius" Value="6" /></Style>
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#74DCC0" />
+      <Setter Property="Foreground" Value="#10251F" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+  </Application.Styles>
+</Application>
