@@ -216,7 +216,7 @@ public sealed class WorkspacePresenter : IDisposable
         outputDirectory = string.Empty;
         activeGeneration = null;
         view.BeginGeneration();
-        view.ShowStatus("Codex GPT-6 highで生成中。完了まで数分かかる場合があります。");
+        view.ShowStatus($"Codex GPT-6 {CodexCommand.ReasoningEffort}で生成中。完了まで数分かかる場合があります。");
         generation.Disposable = runner.Run(request).SubscribeOn(TaskPoolScheduler.Default)
             .ObserveOn(userInterface).Subscribe(ReceiveUpdate, GenerationFailed, GenerationEnded);
     }

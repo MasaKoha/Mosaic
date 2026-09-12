@@ -9,3 +9,15 @@ artifacts/
 .env.*
 *.secret.*
 .claude/settings.local.json
+.codex/
+auth.json
+*.pem
+*.key
+*.p12
+*.pfx
+mock-*/
+Recovery/
+session.json
+session-unreadable-*.json
+events.jsonl
+diagnostics.log

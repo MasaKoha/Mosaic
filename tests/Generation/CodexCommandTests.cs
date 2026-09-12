@@ -19,7 +19,13 @@ public sealed class CodexCommandTests
         Assert.True(information.RedirectStandardInput);
         Assert.Contains(directory, information.ArgumentList);
         Assert.Contains("gpt-6-astra", information.ArgumentList);
-        Assert.Contains("model_reasoning_effort=\"high\"", information.ArgumentList);
+        Assert.Contains("model_reasoning_effort=\"xhigh\"", information.ArgumentList);
+        Assert.Contains("--ignore-user-config", information.ArgumentList);
+        Assert.Contains("model_provider=\"openai\"", information.ArgumentList);
+        Assert.Contains("approval_policy=\"never\"", information.ArgumentList);
+        Assert.Contains("sandbox_workspace_write.network_access=false", information.ArgumentList);
+        Assert.Contains("shell_environment_policy.inherit=\"core\"", information.ArgumentList);
+        Assert.Contains("shell_environment_policy.ignore_default_excludes=false", information.ArgumentList);
         Assert.Contains("workspace-write", information.ArgumentList);
         Assert.DoesNotContain("--dangerously-bypass-approvals-and-sandbox", information.ArgumentList);
         Assert.Equal("-", information.ArgumentList[^1]);

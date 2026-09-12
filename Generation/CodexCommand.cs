@@ -11,7 +11,7 @@ public sealed class CodexCommand
     /// <summary>ローカルのモデル一覧で確認したGPT-6の識別子。</summary>
     public const string Model = "gpt-6-astra";
     /// <summary>指定された推論強度。</summary>
-    public const string ReasoningEffort = "high";
+    public const string ReasoningEffort = "xhigh";
 
     /// <summary>標準的なインストール先を含めて実行ファイルを探す。</summary>
     public string FindExecutable()
@@ -55,9 +55,13 @@ public sealed class CodexCommand
         };
         string[] arguments =
         [
-            "exec", "--model", Model,
+            "exec", "--ignore-user-config", "--model", Model,
             "--config", $"model_reasoning_effort=\"{ReasoningEffort}\"",
+            "--config", "model_provider=\"openai\"",
             "--config", "approval_policy=\"never\"",
+            "--config", "sandbox_workspace_write.network_access=false",
+            "--config", "shell_environment_policy.inherit=\"core\"",
+            "--config", "shell_environment_policy.ignore_default_excludes=false",
             "--sandbox", "workspace-write",
             "--skip-git-repo-check", "--json", "--color", "never",
             "--output-last-message", Path.Combine(outputDirectory, "result.md"),

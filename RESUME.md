@@ -18,7 +18,7 @@ Unityの生成コードを変更する場合はunity-csharp.md、Codex連携を�
 - Avaloniaのデスクトップアプリ。MVP + Rx.NET + NRT、日本語のコメントとpublic summary。
 - 18カテゴリ・163項目。ジャンルは最大3種類。空欄はAI補完、「なし」は不採用指定。
 - 生成形式はブラウザ・Unity・Avalonia。初期値はブラウザ。
-- Codex CLIのgpt-6-astra / highを使用。モデル変更・自動再試行・Banked resetは行わない。
+- Codex CLIのgpt-6-astra / xhighを使用。モデル変更・自動再試行・Banked resetは行わない。
 - 生成物は毎回別フォルダ。明示指定と完了レポートを検査する。ゲームの動作確認済みとは表示しない。
 - AppとWorkspaceWindowのpartialはAvaloniaの自動生成連携のための例外。
 

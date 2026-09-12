@@ -15,12 +15,12 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
           clean: false
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
           dotnet-version: '8.0.x'
       - name: ビルドとテスト
-        run: dotnet test tests/GameMockStudio.Tests.csproj --configuration Release --nologo
+        run: dotnet test tests/GameMockStudio.Tests.csproj --configuration Release --nologo -p:AuditPipeline=true
