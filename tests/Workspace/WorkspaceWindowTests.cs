@@ -17,6 +17,8 @@ using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using GameMockStudio.Brief;
 using GameMockStudio.Generation.History;
+using GameMockStudio.Generation;
+using GameMockStudio.Tests.Generation.Fixtures;
 using GameMockStudio.Storage;
 using GameMockStudio.Workspace;
 using Xunit;
@@ -184,6 +186,142 @@ public sealed class WorkspaceWindowTests : IDisposable
             File.SetUnixFileMode(sessionPath, UnixFileMode.UserRead | UnixFileMode.UserWrite);
         }
         Assert.Equal("preserve original", await File.ReadAllTextAsync(sessionPath, TestContext.Current.CancellationToken));
+    }
+
+    /// <summary>古いゲームの感想編集で対象が最新へ飛ばず、切替・即時終了後も下書きを取り違えない。</summary>
+    [AvaloniaFact]
+    public async Task FeedbackDraftsFollowSelectedGameAcrossAutosaveAndRestart()
+    {
+        using var store = new WorkspaceSessionStore(directory);
+        var entries = new[] { "latest", "older" }.Select((name, position) => new GenerationHistoryEntry
+        {
+            StartedAt = DateTimeOffset.Now.AddMinutes(-position), OutputDirectory = Path.Combine(directory, name),
+            Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed, Feedback = name + "の感想"
+        }).ToArray();
+        foreach (var entry in entries)
+        {
+            Directory.CreateDirectory(entry.OutputDirectory);
+            await new BriefStore().SaveAsync(Path.Combine(entry.OutputDirectory, "resolved-brief.json"), new BriefDocument(), CancellationToken.None);
+        }
+        await store.SaveAsync(CreateSession(new BriefDocument()) with { History = entries }, CancellationToken.None);
+        var window = await OpenAsync();
+        window.FindControl<TabControl>("EditorTabs")!.SelectedIndex = 1;
+        var history = window.FindControl<ComboBox>("HistorySelector")!;
+        var feedback = window.FindControl<TextBox>("FeedbackBox")!;
+        history.SelectedIndex = 1;
+        Assert.Equal("olderの感想", feedback.Text);
+        feedback.Text = "古いゲームの操作は好き。難易度を下げたい。";
+        await WaitForTextAsync(window, "SaveStatusText", "自動保存済み");
+        Assert.Equal(1, history.SelectedIndex);
+        history.SelectedIndex = 0;
+        Assert.Equal("latestの感想", feedback.Text);
+        feedback.Text = " ";
+        Assert.False(window.FindControl<Button>("RefineButton")!.IsEnabled);
+        feedback.Text = "新しいゲームの感想\n終了直前の入力";
+        Assert.True(window.FindControl<Button>("RefineButton")!.IsEnabled);
+        Assert.False(window.FindControl<Button>("GenerateButton")!.IsVisible);
+        await CloseAsync(window);
+        var reopened = await OpenAsync();
+        Assert.Equal("新しいゲームの感想\n終了直前の入力", reopened.FindControl<TextBox>("FeedbackBox")!.Text);
+        reopened.FindControl<ComboBox>("HistorySelector")!.SelectedIndex = 1;
+        Assert.Equal("古いゲームの操作は好き。難易度を下げたい。", reopened.FindControl<TextBox>("FeedbackBox")!.Text);
+        await CloseAsync(reopened);
+    }
+
+    /// <summary>改善は編集中の別企画を維持し、元ゲームの形式と感想を使って完了履歴へ遷移する。</summary>
+    [AvaloniaFact]
+    public async Task RefinementUsesSelectedGameAndKeepsPlanningDraft()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("偽CLIはPOSIXシェルを使用します。");
+            return;
+        }
+        using var fake = new FakeCodexProcess("""
+            sleep 1
+            cp baseline-README.md README.md
+            cp baseline-decisions.md decisions.md
+            cp baseline-resolved-brief.json resolved-brief.json
+            cp baseline-generation-report.json generation-report.json
+            printf '<html>improved</html>' > index.html
+            printf '{"type":"turn.completed"}\n'
+            """);
+        var source = Path.Combine(fake.Request.OutputRoot, "original");
+        Directory.CreateDirectory(source);
+        fake.PrepareArtifacts(new GenerationUpdate { Stage = GenerationStage.Prepared, OutputDirectory = source, Message = "" });
+        var firstIdentifier = new FieldCatalog().Fields[0].Identifier;
+        using var store = new WorkspaceSessionStore(directory);
+        await store.SaveAsync(CreateSession(new BriefDocument
+        {
+            Format = MockFormat.Unity, Values = new() { [firstIdentifier] = "別の企画の下書き" }
+        }) with
+        {
+            Executable = fake.Request.Executable,
+            History = [new GenerationHistoryEntry
+            {
+                StartedAt = DateTimeOffset.Now, OutputDirectory = source,
+                Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed
+            }]
+        }, CancellationToken.None);
+        var window = await OpenAsync();
+        window.FindControl<TabControl>("EditorTabs")!.SelectedIndex = 1;
+        window.FindControl<TextBox>("FeedbackBox")!.Text = "ルールを保って操作感を改善してほしい。";
+        Assert.False(window.FindControl<ComboBox>("FormatSelector")!.IsEnabled);
+        Click(window, "RefineButton");
+        await WaitForTextAsync(window, "StatusText", "生成中");
+        Assert.False(window.FindControl<TextBox>("FeedbackBox")!.IsEnabled);
+        Assert.False(window.FindControl<ComboBox>("HistorySelector")!.IsEnabled);
+        Assert.Contains("ルールを保って操作感を改善してほしい。", window.FindControl<TextBox>("PromptBox")!.Text);
+        await WaitForTextAsync(window, "StatusText", "生成完了。");
+        Assert.Equal("別の企画の下書き", FirstInput(window).Text);
+        Assert.Equal((int)MockFormat.Unity, window.FindControl<ComboBox>("FormatSelector")!.SelectedIndex);
+        Assert.False(window.FindControl<Button>("RefineButton")!.IsEnabled);
+        Assert.True(window.FindControl<Button>("PlayButton")!.IsEnabled);
+        await CloseAsync(window);
+        var saved = (await store.LoadAsync(CancellationToken.None))!;
+        Assert.Equal(2, saved.History.Length);
+        Assert.Equal(GenerationOutcome.Completed, saved.History[0].Outcome);
+        Assert.Equal(MockFormat.Browser, saved.History[0].Format);
+        Assert.Equal(source, saved.History[0].SourceDirectory);
+        Assert.Equal(saved.History[1].Feedback, saved.History[0].AppliedFeedback);
+        Assert.Contains("ルールを保って", saved.History[0].AppliedFeedback);
+        Assert.Contains("既存のゲームモック", await File.ReadAllTextAsync(Path.Combine(saved.History[0].OutputDirectory, "observed-prompt.txt")));
+    }
+
+    /// <summary>改善が失敗しても元の感想へ戻って再編集でき、失敗版からは改善させない。</summary>
+    [AvaloniaFact]
+    public async Task FailedRefinementKeepsOriginalFeedbackAvailable()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            Assert.Skip("偽CLIはPOSIXシェルを使用します。");
+            return;
+        }
+        using var fake = new FakeCodexProcess("exit 9");
+        var source = Path.Combine(fake.Request.OutputRoot, "original");
+        Directory.CreateDirectory(source);
+        fake.PrepareArtifacts(new GenerationUpdate { Stage = GenerationStage.Prepared, OutputDirectory = source, Message = "" });
+        using var store = new WorkspaceSessionStore(directory);
+        await store.SaveAsync(CreateSession(new BriefDocument()) with
+        {
+            Executable = fake.Request.Executable,
+            History = [new GenerationHistoryEntry
+            {
+                StartedAt = DateTimeOffset.Now, OutputDirectory = source,
+                Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed, Feedback = "残しておく改善要望"
+            }]
+        }, CancellationToken.None);
+        var window = await OpenAsync();
+        window.FindControl<TabControl>("EditorTabs")!.SelectedIndex = 1;
+        Click(window, "RefineButton");
+        await WaitForTextAsync(window, "StatusText", "終了コード 9");
+        Assert.False(window.FindControl<Button>("RefineButton")!.IsEnabled);
+        Assert.False(window.FindControl<Button>("CancelButton")!.IsVisible);
+        window.FindControl<ComboBox>("HistorySelector")!.SelectedIndex = 1;
+        Assert.Equal("残しておく改善要望", window.FindControl<TextBox>("FeedbackBox")!.Text);
+        Assert.True(window.FindControl<Button>("RefineButton")!.IsEnabled);
+        await CloseAsync(window);
+        Assert.Equal(GenerationOutcome.Failed, (await store.LoadAsync(CancellationToken.None))!.History[0].Outcome);
     }
 
     /// <summary>検証専用の保存先だけを削除する。</summary>

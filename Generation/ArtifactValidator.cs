@@ -45,6 +45,20 @@ public sealed class ArtifactValidator(FieldCatalog catalog, BriefStore store)
         ValidateSpecifiedValues(requested, resolved);
     }
 
+    /// <summary>改善で値の変更を許容しつつ、元の未知項目を含む企画情報の欠落を拒否する。</summary>
+    public async Task ValidateRefinementAsync(string directory, BriefDocument baseline, CancellationToken cancellationToken)
+    {
+        // AIが編集できる資料ファイルではなく、実行前に読み込んだ企画を照合元にする。
+        var resolved = await store.LoadAsync(Path.Combine(directory, "resolved-brief.json"), cancellationToken);
+        foreach (var identifier in baseline.Values.Keys)
+        {
+            if (!resolved.Values.TryGetValue(identifier, out var value) || string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"改善版の企画から元の項目が失われています: {identifier}");
+            }
+        }
+    }
+
     private async Task ValidateCompletionAsync(string directory, CancellationToken cancellationToken)
     {
         RequireFile(directory, GenerationReport.FileName);

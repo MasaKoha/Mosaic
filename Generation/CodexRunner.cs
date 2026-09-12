@@ -5,6 +5,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GameMockStudio.Brief;
+using GameMockStudio.Generation.Refinement;
 using GameMockStudio.Storage;
 
 namespace GameMockStudio.Generation;
@@ -18,6 +20,11 @@ public sealed class CodexRunner(CodexCommand command, BriefStore store, Artifact
         return Observable.Create<GenerationUpdate>(async (observer, cancellationToken) =>
         {
             cancellationToken.ThrowIfCancellationRequested();
+            if (request.Refinement is { } refinement)
+            {
+                refinement.Validate();
+                new GameSnapshot().ValidateDestination(refinement.SourceDirectory, request.OutputRoot);
+            }
             var synchronized = Observer.Synchronize(observer);
             var directory = CreateOutputDirectory(request.OutputRoot);
             synchronized.OnNext(new GenerationUpdate
@@ -26,10 +33,19 @@ public sealed class CodexRunner(CodexCommand command, BriefStore store, Artifact
                 Message = $"生成先: {directory}",
                 OutputDirectory = directory
             });
+            BriefDocument? baseline = null;
+            if (request.Refinement is { } preparation)
+            {
+                baseline = await new RefinementPreparation(validator, store).PrepareAsync(preparation, request.Brief, directory, cancellationToken);
+            }
             await store.SaveAsync(Path.Combine(directory, "request.json"), request.Brief, cancellationToken);
             await File.WriteAllTextAsync(Path.Combine(directory, "prompt.md"), request.Prompt, cancellationToken);
             await ExecuteWithinTimeLimitAsync(request, directory, synchronized, cancellationToken);
             await validator.ValidateAsync(directory, request.Brief, cancellationToken);
+            if (baseline is not null)
+            {
+                await validator.ValidateRefinementAsync(directory, baseline, cancellationToken);
+            }
             cancellationToken.ThrowIfCancellationRequested();
             synchronized.OnNext(new GenerationUpdate
             {

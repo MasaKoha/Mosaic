@@ -45,6 +45,18 @@ public sealed class GenerationHistory : IDisposable
         changes.OnNext(Unit.Default);
     }
 
+    /// <summary>感想を対象のゲームへ保存し、履歴順と他のゲームの下書きを維持する。</summary>
+    public void UpdateFeedback(string outputDirectory, string feedback)
+    {
+        var position = entries.FindIndex(entry => entry.OutputDirectory == outputDirectory);
+        if (position < 0 || entries[position].Feedback == feedback)
+        {
+            return;
+        }
+        entries[position] = (entries[position] with { Feedback = feedback }).Validate();
+        changes.OnNext(Unit.Default);
+    }
+
     /// <summary>結果通知の寿命を終了する。</summary>
     public void Dispose()
     {

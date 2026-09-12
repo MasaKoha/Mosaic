@@ -10,6 +10,7 @@ using Avalonia.Interactivity;
 using GameMockStudio.Brief;
 using GameMockStudio.Generation.History;
 using GameMockStudio.Workspace.Editing;
+using GameMockStudio.Workspace.Refinement;
 
 namespace GameMockStudio.Workspace;
 
@@ -28,6 +29,8 @@ public sealed class WorkspaceView : IDisposable
     private readonly TextBox outputRoot;
     private readonly ComboBox history;
     private readonly Dictionary<WorkspaceAction, Button> buttons;
+    private string[] historyDirectories = [];
+    private bool updatingHistory;
 
     /// <summary>UIイベントをObservableとして公開する。</summary>
     public WorkspaceView(WorkspaceControls controls, FieldCatalog catalog)
@@ -43,17 +46,20 @@ public sealed class WorkspaceView : IDisposable
         history = controls.Find<ComboBox>("HistorySelector");
         buttons = Enum.GetValues<WorkspaceAction>().ToDictionary(action => action,
             action => controls.Find<Button>(action + "Button"));
+        FeedbackEditor = new FeedbackEditor(controls);
         Commands = buttons.Select(pair => pair.Value.GetObservable(Button.ClickEvent).Select(_ => pair.Key)).Merge();
         Changes = editor.Changes.Merge(format.GetObservable(SelectingItemsControl.SelectedIndexProperty)
             .Skip(1).Select(_ => Unit.Default));
         SettingsChanges = executable.GetObservable(TextBox.TextProperty)
             .Merge(outputRoot.GetObservable(TextBox.TextProperty)).Skip(2).Select(_ => Unit.Default);
         HistorySelection = history.GetObservable(SelectingItemsControl.SelectedIndexProperty)
-            .Skip(1).Select(_ => Unit.Default);
+            .Skip(1).Where(_ => !updatingHistory).Select(_ => Unit.Default);
     }
 
     /// <summary>利用者が要求した操作。</summary>
     public IObservable<WorkspaceAction> Commands { get; }
+    /// <summary>感想入力と改善対象の表示。</summary>
+    public FeedbackEditor FeedbackEditor { get; }
     /// <summary>企画または生成形式の変更。</summary>
     public IObservable<Unit> Changes { get; }
     /// <summary>生成の接続設定または出力先の変更。</summary>
@@ -85,6 +91,7 @@ public sealed class WorkspaceView : IDisposable
     {
         editor.Apply(document);
         format.SelectedIndex = (int)document.Format;
+        FeedbackEditor.ShowPlanning();
     }
 
     /// <summary>生成指示のプレビューを更新する。</summary>
@@ -111,12 +118,32 @@ public sealed class WorkspaceView : IDisposable
         controls.Find<TextBlock>("SaveStatusText").Text = message;
     }
 
-    /// <summary>生成履歴を表示して最新の結果を選択する。</summary>
+    /// <summary>感想の自動保存で選択対象が変わらないよう履歴を更新する。</summary>
     public void ShowHistory(IReadOnlyList<GenerationHistoryEntry> entries)
     {
-        history.ItemsSource = entries.Select(entry =>
-            $"{entry.StartedAt.ToLocalTime():MM/dd HH:mm} · {DescribeOutcome(entry.Outcome)} · {entry.Format}").ToArray();
-        history.SelectedIndex = entries.Count > 0 ? 0 : -1;
+        var selected = history.SelectedIndex >= 0 && history.SelectedIndex < historyDirectories.Length
+            ? historyDirectories[history.SelectedIndex] : string.Empty;
+        updatingHistory = true;
+        try
+        {
+            historyDirectories = entries.Select(entry => entry.OutputDirectory).ToArray();
+            history.ItemsSource = entries.Select(entry =>
+                $"{entry.StartedAt.ToLocalTime():MM/dd HH:mm} · {DescribeOutcome(entry.Outcome)} · {entry.Format}"
+                + (entry.SourceDirectory.Length > 0 ? " · 改善版" : string.Empty)).ToArray();
+            var position = Array.IndexOf(historyDirectories, selected);
+            var fallback = entries.Count > 0 ? 0 : -1;
+            history.SelectedIndex = position >= 0 ? position : fallback;
+        }
+        finally
+        {
+            updatingHistory = false;
+        }
+    }
+
+    /// <summary>開始した生成を履歴の閲覧対象にする。</summary>
+    public void SelectLatestHistory()
+    {
+        history.SelectedIndex = 0;
     }
 
     /// <summary>実行ログを切り替え、過去の結果表示を初期化する。</summary>
@@ -141,6 +168,7 @@ public sealed class WorkspaceView : IDisposable
         buttons[WorkspaceAction.Cancel].IsVisible = running;
         buttons[WorkspaceAction.Generate].IsVisible = !running;
         history.IsEnabled = !running;
+        FeedbackEditor.SetBusy(running);
         if (running)
         {
             buttons[WorkspaceAction.UseResolved].IsEnabled = false;
@@ -150,6 +178,7 @@ public sealed class WorkspaceView : IDisposable
     /// <summary>企画を退避・置換している間の追加入力による消失を防ぐ。</summary>
     public void SetFileOperation(bool busy)
     {
+        FeedbackEditor.SetBusy(busy);
         controls.Find<StackPanel>("ConfigurationPanel").IsEnabled = !busy;
         controls.Find<StackPanel>("EditorHost").IsEnabled = !busy;
         foreach (var action in new[] { WorkspaceAction.New, WorkspaceAction.Load, WorkspaceAction.Save, WorkspaceAction.Generate })
@@ -184,6 +213,7 @@ public sealed class WorkspaceView : IDisposable
     public void Dispose()
     {
         editor.Dispose();
+        FeedbackEditor.Dispose();
     }
 
     private string DescribeOutcome(GenerationOutcome outcome)

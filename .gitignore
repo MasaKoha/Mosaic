@@ -21,3 +21,6 @@ session.json
 session-unreadable-*.json
 events.jsonl
 diagnostics.log
+feedback.md
+refinement-request.json
+baseline-*
