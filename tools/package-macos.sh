@@ -24,7 +24,7 @@ cat > "$bundle_directory/Contents/Info.plist" <<'PLIST'
   <key>CFBundleDisplayName</key><string>Game Mock Studio</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleVersion</key><string>1</string>
-  <key>CFBundleShortVersionString</key><string>0.2.0</string>
+  <key>CFBundleShortVersionString</key><string>0.3.0</string>
   <key>NSHighResolutionCapable</key><true/>
 </dict>
 </plist>

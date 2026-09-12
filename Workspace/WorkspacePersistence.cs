@@ -9,13 +9,14 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Generation.History;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Storage;
 
 namespace GameMockStudio.Workspace;
 
 /// <summary>編集変更の自動保存と、起動・終了時の引き継ぎを接続する。</summary>
 public sealed class WorkspacePersistence(
-    WorkspaceView view, GenerationHistory history, WorkspaceSessionStore store, IScheduler userInterface) : IDisposable
+    WorkspaceView view, GenerationHistory history, BriefDrafts drafts, WorkspaceSessionStore store, IScheduler userInterface) : IDisposable
 {
     private static readonly TimeSpan SaveDelay = TimeSpan.FromMilliseconds(700);
     private readonly SerialDisposable automaticSave = new();
@@ -30,6 +31,7 @@ public sealed class WorkspacePersistence(
             var session = await store.LoadAsync(cancellationToken);
             if (session is not null)
             {
+                drafts.Restore(session.Drafts, session.Brief);
                 view.ApplyBrief(session.Brief);
                 view.Configure(session.Executable, session.OutputRoot);
                 history.Restore(session.History);
@@ -104,9 +106,11 @@ public sealed class WorkspacePersistence(
 
     private WorkspaceSession Capture()
     {
+        var brief = view.CaptureBrief();
         return new WorkspaceSession
         {
-            Brief = view.CaptureBrief(),
+            Brief = brief,
+            Drafts = drafts.Capture(brief),
             Executable = view.Executable,
             OutputRoot = view.OutputRoot,
             History = history.Entries.ToArray()

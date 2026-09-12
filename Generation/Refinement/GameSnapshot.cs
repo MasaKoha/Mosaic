@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameMockStudio.Generation.Refinement;
 
-/// <summary>秘密情報・キャッシュ・リンクを持ち込まず、ゲームの独立した作業コピーを作る。</summary>
+/// <summary>秘密情報・キャッシュ・リンクを持ち込まず、モックの独立した作業コピーを作る。</summary>
 public sealed class GameSnapshot
 {
     private const int MaximumFiles = 10000;
@@ -23,7 +23,7 @@ public sealed class GameSnapshot
         ".pem", ".key", ".p12", ".pfx", ".log"
     };
 
-    /// <summary>リンク経由も含めて、元のゲーム配下を出力先として使うことを拒否する。</summary>
+    /// <summary>リンク経由も含めて、元のモック配下を出力先として使うことを拒否する。</summary>
     public void ValidateDestination(string sourceDirectory, string outputRoot)
     {
         RequireRegularEntry(new DirectoryInfo(sourceDirectory));
@@ -33,7 +33,7 @@ public sealed class GameSnapshot
         if (destination.Equals(source, comparison)
             || destination.StartsWith(Path.TrimEndingDirectorySeparator(source) + Path.DirectorySeparatorChar, comparison))
         {
-            throw new InvalidOperationException("元のゲームを保護するため、出力先はその成果物フォルダの外に指定してください。");
+            throw new InvalidOperationException("元のモックを保護するため、出力先はその成果物フォルダの外に指定してください。");
         }
     }
 

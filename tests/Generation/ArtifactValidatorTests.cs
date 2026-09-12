@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation;
 using GameMockStudio.Storage;
 using Xunit;
@@ -39,7 +40,7 @@ public sealed class ArtifactValidatorTests : IDisposable
     public async Task CompleteArtifactSetPassesFileValidation()
     {
         await WriteResolvedAsync(CreateResolved());
-        await new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None);
+        await new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None);
     }
 
     /// <summary>明示された不採用をAIが書き換えた場合は拒否する。</summary>
@@ -50,7 +51,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         resolved.Values["combat_style"] = "リアルタイム戦闘";
         await WriteResolvedAsync(resolved);
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
     }
 
     /// <summary>未入力項目の補完が欠けた場合は未完了として拒否する。</summary>
@@ -61,7 +62,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         resolved.Values.Remove("world_theme");
         await WriteResolvedAsync(resolved);
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
     }
 
     /// <summary>AIが指定ジャンルを追加した場合は拒否する。</summary>
@@ -70,7 +71,7 @@ public sealed class ArtifactValidatorTests : IDisposable
     {
         await WriteResolvedAsync(CreateResolved() with { Genres = ["パズル", "アクション"] });
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
     }
 
     /// <summary>CLIが正常終了しても矛盾や実装不足を報告した成果物は成功にしない。</summary>
@@ -84,7 +85,7 @@ public sealed class ArtifactValidatorTests : IDisposable
             $$"""{"Version":1,"Status":"{{status}}","Summary":"操作指定が矛盾しています","BlockingIssues":{{blockingIssues}}}""", TestContext.Current.CancellationToken);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
 
         Assert.Contains("未完了", exception.Message);
     }
@@ -102,7 +103,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         await File.WriteAllTextAsync(Path.Combine(directory, "generation-report.json"), report, TestContext.Current.CancellationToken);
 
         var exception = await Record.ExceptionAsync(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
 
         Assert.True(exception is InvalidOperationException or JsonException);
     }
@@ -117,7 +118,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         File.Delete(Path.Combine(directory, relativePath));
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
 
         Assert.Contains(relativePath, exception.Message);
     }
@@ -133,7 +134,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         await File.WriteAllTextAsync(Path.Combine(directory, relativePath), " \r\n\t", TestContext.Current.CancellationToken);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested, CancellationToken.None));
 
         Assert.Contains(relativePath, exception.Message);
     }
@@ -148,7 +149,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         await WriteResolvedAsync(CreateResolved() with { Format = format });
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, requested with { Format = format }, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, requested with { Format = format }, CancellationToken.None));
 
         Assert.Contains("実装ソース", exception.Message);
     }
@@ -161,7 +162,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         await WriteResolvedAsync(CreateResolved());
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateAsync(directory, extendedRequest, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateAsync(directory, extendedRequest, CancellationToken.None));
 
         Assert.Contains("future_rule", exception.Message);
     }
@@ -175,7 +176,7 @@ public sealed class ArtifactValidatorTests : IDisposable
         await store.SaveAsync(Path.Combine(directory, "baseline-resolved-brief.json"), CreateResolved(), CancellationToken.None);
         await WriteResolvedAsync(CreateResolved());
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            new ArtifactValidator(catalog, store).ValidateRefinementAsync(directory, baseline, CancellationToken.None));
+            new ArtifactValidator(new FieldCatalogs(), store).ValidateRefinementAsync(directory, baseline, CancellationToken.None));
         Assert.Contains("future_rule", exception.Message);
     }
 

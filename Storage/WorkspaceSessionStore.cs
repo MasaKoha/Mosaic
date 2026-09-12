@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Generation.History;
+using GameMockStudio.Brief.Planning;
 
 namespace GameMockStudio.Storage;
 
@@ -65,8 +66,8 @@ public sealed class WorkspaceSessionStore(string directory) : IDisposable
 
     private WorkspaceSession Validate(WorkspaceSession session)
     {
-        if (session.Version != WorkspaceSession.CurrentVersion || session.Brief is null || session.Executable is null
-            || session.OutputRoot is null || session.History is null)
+        if (session.Version is not (1 or WorkspaceSession.CurrentVersion) || session.Brief is null || session.Executable is null
+            || session.OutputRoot is null || session.History is null || session.Drafts is null)
         {
             throw new InvalidOperationException("対応していない自動保存ファイルです。");
         }
@@ -78,6 +79,13 @@ public sealed class WorkspaceSessionStore(string directory) : IDisposable
             }
             entry.Validate();
         }
-        return session with { Brief = session.Brief.Normalize() };
+        var drafts = new BriefDrafts();
+        drafts.Restore(session.Drafts, session.Brief);
+        return session with
+        {
+            Version = WorkspaceSession.CurrentVersion,
+            Brief = session.Brief.Normalize(),
+            Drafts = drafts.Capture(session.Brief)
+        };
     }
 }

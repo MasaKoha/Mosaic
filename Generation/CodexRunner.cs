@@ -50,7 +50,7 @@ public sealed class CodexRunner(CodexCommand command, BriefStore store, Artifact
             synchronized.OnNext(new GenerationUpdate
             {
                 Stage = GenerationStage.Completed,
-                Message = "生成完了。完了レポート、必須ファイル、企画の整合を確認しました。ゲームの動作は未確認です。",
+                Message = "生成完了。完了レポート、必須ファイル、企画の整合を確認しました。モックの動作は未確認です。",
                 OutputDirectory = directory
             });
         });

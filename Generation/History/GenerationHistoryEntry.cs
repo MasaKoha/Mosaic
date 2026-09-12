@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation.Refinement;
 
 namespace GameMockStudio.Generation.History;
@@ -12,12 +13,14 @@ public sealed record GenerationHistoryEntry
     public required DateTimeOffset StartedAt { get; init; }
     /// <summary>成果物フォルダの絶対パス。</summary>
     public required string OutputDirectory { get; init; }
-    /// <summary>生成したゲームの形式。</summary>
+    /// <summary>生成対象の種類。旧履歴はゲームとして復元する。</summary>
+    public MockKind Kind { get; init; } = MockKind.Game;
+    /// <summary>生成したモックの形式。</summary>
     public required MockFormat Format { get; init; }
     /// <summary>最後に確認できた結果。</summary>
     public required GenerationOutcome Outcome { get; init; }
 
-    /// <summary>このゲームを遊んだ感想の下書き。</summary>
+    /// <summary>このモックを使った感想の下書き。</summary>
     public string Feedback { get; init; } = string.Empty;
     /// <summary>改善元の成果物フォルダ。新規生成は空文字。</summary>
     public string SourceDirectory { get; init; } = string.Empty;
@@ -28,7 +31,8 @@ public sealed record GenerationHistoryEntry
     public GenerationHistoryEntry Validate()
     {
         if (string.IsNullOrWhiteSpace(OutputDirectory) || !Path.IsPathFullyQualified(OutputDirectory)
-            || !Enum.IsDefined(Format) || !Enum.IsDefined(Outcome)
+            || !Enum.IsDefined(Format) || !Enum.IsDefined(Outcome) || !Enum.IsDefined(Kind)
+            || (Kind == MockKind.Service && Format == MockFormat.Unity)
             || Feedback is null || Feedback.Length > RefinementRequest.MaximumFeedbackCharacters
             || AppliedFeedback is null || AppliedFeedback.Length > RefinementRequest.MaximumFeedbackCharacters
             || SourceDirectory is null || (SourceDirectory.Length > 0 && !Path.IsPathFullyQualified(SourceDirectory)))

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation;
 using GameMockStudio.Storage;
 
@@ -37,14 +37,14 @@ public sealed partial class WorkspaceWindow : Window
     public WorkspaceWindow(string dataDirectory)
     {
         AvaloniaXamlLoader.Load(this);
-        var catalog = new FieldCatalog();
+        var catalogs = new FieldCatalogs();
         var controls = new WorkspaceControls(this);
-        view = new WorkspaceView(controls, catalog);
+        view = new WorkspaceView(controls, catalogs);
         var store = new BriefStore();
         var command = new CodexCommand();
-        var runner = new CodexRunner(command, store, new ArtifactValidator(catalog, store));
+        var runner = new CodexRunner(command, store, new ArtifactValidator(catalogs, store));
         presenter = new WorkspacePresenter(view, new WorkspaceFiles(this, store, dataDirectory),
-            new PromptComposer(catalog), runner, new WorkspaceSessionStore(dataDirectory));
+            new PromptComposer(catalogs), runner, new WorkspaceSessionStore(dataDirectory));
         view.Configure(command.FindExecutable(), WorkspaceFiles.DefaultOutputRoot);
         IsEnabled = false;
         initialization = presenter.InitializeAsync(CancellationToken.None);

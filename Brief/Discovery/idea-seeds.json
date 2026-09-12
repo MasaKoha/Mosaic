@@ -1,0 +1,175 @@
+[
+  {
+    "Kind": 0,
+    "Title": "短時間の発見パズル",
+    "Description": "観察して一つの違いを見つける、1分で一巡するゲーム。まず操作の分かりやすさと再挑戦の気持ちを確かめます。",
+    "Genres": [
+      "パズル"
+    ],
+    "Values": {
+      "pitch": "1分で一つの違いを発見する観察パズル",
+      "core_loop": "観察→違いを選ぶ→結果→別の問題で再挑戦",
+      "validation_goal": "説明なしで操作でき、再挑戦したくなるかを確かめる"
+    }
+  },
+  {
+    "Kind": 1,
+    "Title": "SNS · 小さな「助けて」を交換する",
+    "Description": "地域の短い手助けを、投稿→条件確認→応募→取消まで試すSNS。公開範囲と断りやすさが、初対面の相手への不安を減らすかを確かめます。",
+    "Genres": [],
+    "Values": {
+      "service_title": "ご近所ヘルプ",
+      "service_type": "地域の助け合いSNS",
+      "service_users": "同じ地域で暮らす人",
+      "service_problem": "小さな困りごとを誰に頼めばよいか分からない",
+      "service_hypothesis": "作業内容と時間が明確なら声をかけやすくなるのではないか",
+      "service_steps": "困りごとを投稿→条件を確認→デモ応募→結果確認→取消",
+      "service_social": "地域グループ内の投稿と定型メッセージ",
+      "service_external": "すべて架空データ。実際の応募やメッセージ送信は行わない",
+      "service_next_decision": "交流SNSにするか、依頼の整理ツールに絞るか"
+    }
+  },
+  {
+    "Kind": 1,
+    "Title": "生活 · 冷蔵庫の「使い忘れ」を減らす",
+    "Description": "余った食材を登録し、使い切る順番を選べる個人用ツール。SNS機能を付けず、入力の手間に見合う価値があるかを試します。",
+    "Genres": [],
+    "Values": {
+      "service_title": "使い切りメモ",
+      "service_type": "個人用の生活支援ツール",
+      "service_users": "自炊する一人暮らしの人",
+      "service_problem": "食材を買ったことを忘れて使い切れない",
+      "service_steps": "食材登録→期限順で確認→今日使う食材を選択→使用済みにする→取り消す",
+      "service_social": "なし",
+      "service_hypothesis": "先に使う食材が見えると献立を決めやすいのではないか",
+      "service_success": "登録の負担と食材を選ぶまでの迷いを観察する"
+    }
+  },
+  {
+    "Kind": 1,
+    "Title": "仕事 · 依頼の抜け漏れを見える化する",
+    "Description": "少人数チームの依頼を、担当・期限・次の一手で整理するツール。チャットを増やさず、引き継ぎの迷いを減らせるかを試します。",
+    "Genres": [],
+    "Values": {
+      "service_title": "次の一手ボード",
+      "service_type": "小規模チームの業務支援",
+      "service_users": "複数の依頼を兼任する3〜5人のチーム",
+      "service_problem": "担当と次にやることが会話の中に埋もれる",
+      "service_steps": "依頼登録→担当と次の一手を選択→絞り込み→完了→差し戻し",
+      "service_hypothesis": "各依頼の次の一手を明示すると確認の往復が減るのではないか",
+      "service_identity": "架空の担当者を切り替えるデモ",
+      "service_social": "なし",
+      "service_external": "チャット通知は画面内のデモログだけ"
+    }
+  },
+  {
+    "Kind": 1,
+    "Title": "学習 · 分からなかった点から復習を選ぶ",
+    "Description": "学習のつまずきを短く記録し、次に復習する一件を選ぶツール。記録が増えることより、次の行動につながるかを確かめます。",
+    "Genres": [],
+    "Values": {
+      "service_title": "つまずきノート",
+      "service_type": "個人用の学習支援",
+      "service_problem": "勉強した後にどこを復習するか決められない",
+      "service_steps": "つまずきを記録→分類→次の復習を選択→理解度を更新→再編集",
+      "service_social": "なし",
+      "service_hypothesis": "理解できなかった点から復習を選ぶと着手しやすいのではないか",
+      "service_next_decision": "個人用メモを深めるか、質問を共有するSNSへ広げるか"
+    }
+  },
+  {
+    "Kind": 1,
+    "Title": "比較 · 選択肢の迷いを整理する",
+    "Description": "候補と重視する条件を入力し、比較して決める道具。自動で正解を断定せず、何を優先して選ぶかを自分で説明できるかを試します。",
+    "Genres": [],
+    "Values": {
+      "service_title": "えらぶメモ",
+      "service_type": "意思決定を補助するツール",
+      "service_problem": "候補が多く、何を基準に選ぶか分からなくなる",
+      "service_steps": "候補を入力→条件を追加→優先順位を変更→比較→選択理由を記録→再検討",
+      "service_social": "なし",
+      "service_hypothesis": "条件と優先順位を並べると納得して候補を絞れるのではないか",
+      "service_automation": "固定ルールによる並べ替え。最適解や効果は保証しない"
+    }
+  },
+  {
+    "Kind": 2,
+    "Title": "学習 × 復習の着手 × デッキ構築",
+    "Description": "復習した単語がカードの能力に反映され、育成先を自分で選べます。同じ問題をゲームなしでも解き、始めやすさと学習への集中を比較します。",
+    "Genres": [
+      "カード",
+      "育成"
+    ],
+    "Values": {
+      "gamification_domain": "語学学習",
+      "gamification_moment": "帰宅後の5分の復習",
+      "gamification_behavior": "苦手な単語を3問復習する",
+      "gamification_mechanic": "復習内容を反映するデッキ構築",
+      "gamification_mapping": "復習を終えると選んだカードの能力と単語の説明が更新される",
+      "gamification_hypothesis": "育成先を選ぶ楽しさが復習への着手を助けるのではないか",
+      "gamification_comparison": "同じ3問を通常の復習とカード版で切り替えて試す",
+      "gamification_scope": "架空の単語6件、カード3枚、1回の模擬戦",
+      "pitch": "復習でカードを育てる語学学習モック"
+    }
+  },
+  {
+    "Kind": 2,
+    "Title": "生活 × 片付けの一歩目 × 拠点づくり",
+    "Description": "小さな片付けを選んで完了すると、仮想の部屋に家具を置けます。連続日数の罰を設けず、通常のチェックリストとの使い心地を比較します。",
+    "Genres": [
+      "シミュレーション",
+      "育成"
+    ],
+    "Values": {
+      "gamification_domain": "生活・片付け",
+      "gamification_moment": "部屋を片付けたいが取りかかれない瞬間",
+      "gamification_behavior": "2分で終わる片付けを一つ実行する",
+      "gamification_mechanic": "部屋の拠点づくり",
+      "gamification_mapping": "選んだ片付けの完了で対応する家具を配置できる",
+      "gamification_hypothesis": "小さな達成が部屋の変化として見えると次の一歩を選びやすいのではないか",
+      "gamification_comparison": "同じ作業をチェックリストのみでも完了できる",
+      "gamification_limits": "休んでも部屋を失わず、完了報告はデモ入力",
+      "pitch": "小さな片付けで仮想の部屋を整える"
+    }
+  },
+  {
+    "Kind": 2,
+    "Title": "仕事 × 大きな作業の分割 × 探索マップ",
+    "Description": "作業を小さな一手に分けて進めると探索ルートが開きます。作業の数を稼ぐ設計を避け、次の一手が明確になるかを通常のタスク一覧と比較します。",
+    "Genres": [
+      "探索",
+      "パズル"
+    ],
+    "Values": {
+      "gamification_domain": "仕事・個人のタスク整理",
+      "gamification_moment": "大きな作業を前に着手できないとき",
+      "gamification_behavior": "次にできる小さな一手を選んで完了する",
+      "gamification_mechanic": "分岐する探索マップ",
+      "gamification_mapping": "意味のある作業の完了で対応する道が開き次の一手を選べる",
+      "gamification_hypothesis": "進める経路を選べると作業を分割して取りかかりやすいのではないか",
+      "gamification_comparison": "同じ作業を通常のタスク一覧でも操作できる",
+      "gamification_integrity": "作業の細分化や回数だけに報酬を付けず、目的への進捗を表示",
+      "pitch": "次の一手を選んで道を開くタスク探索"
+    }
+  },
+  {
+    "Kind": 2,
+    "Title": "地域 × 身近な場所への関心 × 発見図鑑",
+    "Description": "架空の街のスポットで気づきを記録し、図鑑を埋める体験。実位置情報を使わず、収集だけでなく場所への理解が増えるかを比較します。",
+    "Genres": [
+      "探索",
+      "コレクション"
+    ],
+    "Values": {
+      "gamification_domain": "地域・まちの学び",
+      "gamification_moment": "身近な場所の特徴を知りたいとき",
+      "gamification_behavior": "場所を選び一つの気づきを記録する",
+      "gamification_mechanic": "発見図鑑と探索",
+      "gamification_mapping": "観察メモを追加すると対応する図鑑ページが開き、次に調べる候補を選べる",
+      "gamification_hypothesis": "自分の気づきで図鑑が育つと場所への関心が深まるのではないか",
+      "gamification_comparison": "同じスポットを通常のメモ一覧でも閲覧・記録できる",
+      "gamification_privacy": "架空の地図と場所だけを使いGPSや実在の住所を取得しない",
+      "pitch": "観察メモで育つ架空の街の発見図鑑"
+    }
+  }
+]

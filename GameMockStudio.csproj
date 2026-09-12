@@ -15,5 +15,7 @@
     <PackageReference Include="System.Reactive" Version="6.1.0" />
     <Compile Remove="tests/**/*.cs" />
     <EmbeddedResource Include="Brief/field-catalog.json" />
+    <EmbeddedResource Include="Brief/Planning/*.json" />
+    <EmbeddedResource Include="Brief/Discovery/*.json" />
   </ItemGroup>
 </Project>

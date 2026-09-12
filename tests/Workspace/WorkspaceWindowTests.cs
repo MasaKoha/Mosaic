@@ -16,6 +16,7 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation.History;
 using GameMockStudio.Generation;
 using GameMockStudio.Tests.Generation.Fixtures;
@@ -229,8 +230,11 @@ public sealed class WorkspaceWindowTests : IDisposable
     }
 
     /// <summary>改善は編集中の別企画を維持し、元ゲームの形式と感想を使って完了履歴へ遷移する。</summary>
-    [AvaloniaFact]
-    public async Task RefinementUsesSelectedGameAndKeepsPlanningDraft()
+    [AvaloniaTheory]
+    [InlineData(MockKind.Game)]
+    [InlineData(MockKind.Service)]
+    [InlineData(MockKind.Gamification)]
+    public async Task RefinementUsesSelectedKindAndKeepsPlanningDraft(MockKind kind)
     {
         if (OperatingSystem.IsWindows())
         {
@@ -243,9 +247,10 @@ public sealed class WorkspaceWindowTests : IDisposable
             cp baseline-decisions.md decisions.md
             cp baseline-resolved-brief.json resolved-brief.json
             cp baseline-generation-report.json generation-report.json
+            if [ -f baseline-experiment.md ]; then cp baseline-experiment.md experiment.md; fi
             printf '<html>improved</html>' > index.html
             printf '{"type":"turn.completed"}\n'
-            """);
+            """, kind: kind);
         var source = Path.Combine(fake.Request.OutputRoot, "original");
         Directory.CreateDirectory(source);
         fake.PrepareArtifacts(new GenerationUpdate { Stage = GenerationStage.Prepared, OutputDirectory = source, Message = "" });
@@ -260,7 +265,7 @@ public sealed class WorkspaceWindowTests : IDisposable
             History = [new GenerationHistoryEntry
             {
                 StartedAt = DateTimeOffset.Now, OutputDirectory = source,
-                Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed
+                Kind = kind, Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed
             }]
         }, CancellationToken.None);
         var window = await OpenAsync();
@@ -282,10 +287,11 @@ public sealed class WorkspaceWindowTests : IDisposable
         Assert.Equal(2, saved.History.Length);
         Assert.Equal(GenerationOutcome.Completed, saved.History[0].Outcome);
         Assert.Equal(MockFormat.Browser, saved.History[0].Format);
+        Assert.Equal(kind, saved.History[0].Kind);
         Assert.Equal(source, saved.History[0].SourceDirectory);
         Assert.Equal(saved.History[1].Feedback, saved.History[0].AppliedFeedback);
         Assert.Contains("ルールを保って", saved.History[0].AppliedFeedback);
-        Assert.Contains("既存のゲームモック", await File.ReadAllTextAsync(Path.Combine(saved.History[0].OutputDirectory, "observed-prompt.txt")));
+        Assert.Contains($"既存の{new FieldCatalog(kind).Label}モック", await File.ReadAllTextAsync(Path.Combine(saved.History[0].OutputDirectory, "observed-prompt.txt")));
     }
 
     /// <summary>改善が失敗しても元の感想へ戻って再編集でき、失敗版からは改善させない。</summary>
@@ -322,6 +328,109 @@ public sealed class WorkspaceWindowTests : IDisposable
         Assert.True(window.FindControl<Button>("RefineButton")!.IsEnabled);
         await CloseAsync(window);
         Assert.Equal(GenerationOutcome.Failed, (await store.LoadAsync(CancellationToken.None))!.History[0].Outcome);
+    }
+
+    /// <summary>種類を往復しても下書きと形式が混ざらず、終了直前の入力まで復元する。</summary>
+    [AvaloniaFact]
+    public async Task KindSwitchingPreservesIndependentDraftsAcrossRestart()
+    {
+        var window = await OpenAsync();
+        FirstInput(window).Text = "元のゲーム";
+        window.FindControl<ComboBox>("FormatSelector")!.SelectedIndex = (int)MockFormat.Unity;
+        await ChangeKindAsync(window, MockKind.Service);
+        Assert.False(window.FindControl<ComboBoxItem>("UnityFormatItem")!.IsEnabled);
+        Assert.Equal((int)MockFormat.Browser, window.FindControl<ComboBox>("FormatSelector")!.SelectedIndex);
+        InputByLabel(window, "サービス名").Text = "生活の道具";
+        await ChangeKindAsync(window, MockKind.Gamification);
+        Assert.True(window.FindControl<ComboBoxItem>("UnityFormatItem")!.IsEnabled);
+        InputByLabel(window, "掛け合わせる領域").Text = "片付け";
+        await ChangeKindAsync(window, MockKind.Game);
+        Assert.Equal("元のゲーム", FirstInput(window).Text);
+        Assert.Equal((int)MockFormat.Unity, window.FindControl<ComboBox>("FormatSelector")!.SelectedIndex);
+        await CloseAsync(window);
+
+        var reopened = await OpenAsync();
+        await ChangeKindAsync(reopened, MockKind.Service);
+        Assert.Equal("生活の道具", InputByLabel(reopened, "サービス名").Text);
+        await ChangeKindAsync(reopened, MockKind.Gamification);
+        Assert.Equal("片付け", InputByLabel(reopened, "掛け合わせる領域").Text);
+        InputByLabel(reopened, "対象とする具体的な場面").Text = "終了直前の追記";
+        await CloseAsync(reopened);
+        using var store = new WorkspaceSessionStore(directory);
+        var saved = (await store.LoadAsync(CancellationToken.None))!;
+        Assert.Equal(3, saved.Drafts.Length);
+        Assert.Equal("終了直前の追記", saved.Brief.Values["gamification_moment"]);
+        Assert.DoesNotContain("service_title", saved.Drafts.Single(brief => brief.Kind == MockKind.Game).Values.Keys);
+    }
+
+    /// <summary>案の採用前に現在の入力を退避し、選んだ案を種類に合う編集画面へ反映する。</summary>
+    [AvaloniaTheory]
+    [InlineData(MockKind.Service, "サービス名", "service_title")]
+    [InlineData(MockKind.Gamification, "掛け合わせる領域", "gamification_domain")]
+    public async Task AdoptingIdeaBacksUpDraftAndOpensEditablePlan(MockKind kind, string label, string identifier)
+    {
+        var window = await OpenAsync();
+        await ChangeKindAsync(window, kind);
+        InputByLabel(window, label).Text = "置き換え前の入力";
+        var status = window.FindControl<TextBlock>("StatusText")!;
+        status.Text = string.Empty;
+        Click(window, "ApplyIdeaButton");
+        await WaitForTextAsync(window, "StatusText", "企画を切り替えました");
+        Assert.Equal(0, window.FindControl<TabControl>("EditorTabs")!.SelectedIndex);
+        Assert.NotEqual("置き換え前の入力", InputByLabel(window, label).Text);
+        Assert.False(string.IsNullOrWhiteSpace(InputByLabel(window, label).Text));
+        Assert.Equal((int)kind, window.FindControl<ComboBox>("KindSelector")!.SelectedIndex);
+        var backups = Directory.GetFiles(Path.Combine(directory, "Recovery"), "brief-*.json");
+        var documents = await Task.WhenAll(backups.Select(path => new BriefStore().LoadAsync(path, CancellationToken.None)));
+        Assert.Contains(documents, document => document.Kind == kind
+            && document.Values.GetValueOrDefault(identifier) == "置き換え前の入力");
+        await CloseAsync(window);
+    }
+
+    /// <summary>別種類の補完企画を開くとき、現在企画と置換先の以前の下書きの両方を救出できる。</summary>
+    [AvaloniaFact]
+    public async Task ImportingOtherKindPreservesBothPreviousDraftsInRecovery()
+    {
+        var source = Path.Combine(directory, "completed-service");
+        Directory.CreateDirectory(source);
+        await new BriefStore().SaveAsync(Path.Combine(source, "resolved-brief.json"), new BriefDocument
+        {
+            Kind = MockKind.Service, Values = new() { ["service_title"] = "取り込むサービス" }
+        }, CancellationToken.None);
+        using var store = new WorkspaceSessionStore(directory);
+        await store.SaveAsync(CreateSession(new BriefDocument { Values = new() { ["title"] = "編集中のゲーム" } }) with
+        {
+            Drafts = [new BriefDocument { Kind = MockKind.Service, Values = new() { ["service_title"] = "以前のサービス" } }],
+            History = [new GenerationHistoryEntry
+            {
+                StartedAt = DateTimeOffset.Now, OutputDirectory = source,
+                Kind = MockKind.Service, Format = MockFormat.Browser, Outcome = GenerationOutcome.Completed
+            }]
+        }, CancellationToken.None);
+        var window = await OpenAsync();
+        Click(window, "UseResolvedButton");
+        await WaitForTextAsync(window, "StatusText", "企画を切り替えました");
+        Assert.Equal("取り込むサービス", InputByLabel(window, "サービス名").Text);
+        var paths = Directory.GetFiles(Path.Combine(directory, "Recovery"), "brief-*.json");
+        var backups = await Task.WhenAll(paths.Select(path => new BriefStore().LoadAsync(path, CancellationToken.None)));
+        Assert.Contains(backups, brief => brief.Values.GetValueOrDefault("title") == "編集中のゲーム");
+        Assert.Contains(backups, brief => brief.Values.GetValueOrDefault("service_title") == "以前のサービス");
+        await ChangeKindAsync(window, MockKind.Game);
+        Assert.Equal("編集中のゲーム", FirstInput(window).Text);
+        await CloseAsync(window);
+    }
+
+    private async Task ChangeKindAsync(Window window, MockKind kind)
+    {
+        window.FindControl<TextBlock>("StatusText")!.Text = string.Empty;
+        window.FindControl<ComboBox>("KindSelector")!.SelectedIndex = (int)kind;
+        await WaitForTextAsync(window, "StatusText", "企画を切り替えました");
+    }
+
+    private TextBox InputByLabel(Window window, string label)
+    {
+        return window.FindControl<StackPanel>("EditorHost")!.GetLogicalDescendants().OfType<TextBox>()
+            .Single(input => AutomationProperties.GetName(input) == label);
     }
 
     /// <summary>検証専用の保存先だけを削除する。</summary>

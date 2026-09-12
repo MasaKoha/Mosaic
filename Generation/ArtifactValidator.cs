@@ -6,13 +6,14 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using GameMockStudio.Brief;
+using GameMockStudio.Brief.Planning;
 using GameMockStudio.Generation.Completion;
 using GameMockStudio.Storage;
 
 namespace GameMockStudio.Generation;
 
 /// <summary>終了コードだけで成功とせず、生成物と補完企画を検査する。</summary>
-public sealed class ArtifactValidator(FieldCatalog catalog, BriefStore store)
+public sealed class ArtifactValidator(FieldCatalogs catalogs, BriefStore store)
 {
     private readonly JsonSerializerOptions reportOptions = new()
     {
@@ -27,18 +28,23 @@ public sealed class ArtifactValidator(FieldCatalog catalog, BriefStore store)
         RequireFile(directory, "README.md");
         RequireFile(directory, "decisions.md");
         RequireFile(directory, "resolved-brief.json");
-        RequireGameFiles(directory, requested.Format);
-        var resolved = await store.LoadAsync(Path.Combine(directory, "resolved-brief.json"), cancellationToken);
-        if (resolved.Format != requested.Format || resolved.Genres.Length == 0)
+        RequireMockFiles(directory, requested.Format);
+        if (requested.Kind != MockKind.Game)
         {
-            throw new InvalidOperationException("補完企画の形式またはジャンルが不正です。成果物フォルダを確認してください。");
+            RequireFile(directory, "experiment.md");
+        }
+        var resolved = await store.LoadAsync(Path.Combine(directory, "resolved-brief.json"), cancellationToken);
+        if (resolved.Kind != requested.Kind || resolved.Format != requested.Format
+            || (requested.Kind != MockKind.Service && resolved.Genres.Length == 0))
+        {
+            throw new InvalidOperationException("補完企画の種類・形式またはジャンルが不正です。成果物フォルダを確認してください。");
         }
         if (requested.Genres.Length > 0 && !requested.Genres.ToHashSet(StringComparer.OrdinalIgnoreCase)
                 .SetEquals(resolved.Genres))
         {
             throw new InvalidOperationException("指定したジャンルが生成結果で変更されています。");
         }
-        foreach (var field in catalog.Fields)
+        foreach (var field in catalogs.ForKind(requested.Kind).Fields)
         {
             RequireResolvedField(field, resolved);
         }
@@ -82,13 +88,13 @@ public sealed class ArtifactValidator(FieldCatalog catalog, BriefStore store)
         {
             if (!resolved.Values.TryGetValue(specified.Key, out var value) || value != specified.Value)
             {
-                var label = catalog.Fields.FirstOrDefault(field => field.Identifier == specified.Key)?.Label ?? specified.Key;
+                var label = catalogs.ForKind(requested.Kind).Fields.FirstOrDefault(field => field.Identifier == specified.Key)?.Label ?? specified.Key;
                 throw new InvalidOperationException($"明示指定が変更されています: {label}");
             }
         }
     }
 
-    private void RequireGameFiles(string directory, MockFormat format)
+    private void RequireMockFiles(string directory, MockFormat format)
     {
         switch (format)
         {
