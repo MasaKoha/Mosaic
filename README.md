@@ -125,6 +125,17 @@ Windowsでは `.cmd` ラッパーではなく実体の `codex.exe` を指定し�
 
 MVPとRx.NETを使用します。Viewは入力と描画、Presenterは操作の流れ、Briefは企画、GenerationはCLIと成果物検証、Storageはファイル操作を担当します。入力と操作をObservableへ変換し、購読は画面の寿命で破棄します。シーンやアセットを直接操作するUnity連携はアプリ本体には含みません。
 
+## ターミナル・AI エージェントから使う
+
+第1引数に `cli` を渡すと、GUIを起動せず企画・生成・改善を実行できます。
+AIエージェントは1回1問の `interview next` / `answer`、人間は連続入力の `interview ask` を使います。
+企画JSONはGUIの「企画を開く」でもそのまま読めます。全コマンドは [CLIの使い方](docs/cli.md) を参照してください。
+
+```sh
+dotnet run --project GameMockStudio.csproj -- cli interview start --brief service.json --kind service
+dotnet run --project GameMockStudio.csproj -- cli interview answer --brief service.json --field service_title --value "検証ノート"
+```
+
 ## 開発
 
 既定ブランチは `develop`。変更は作業ブランチからPRを作成し、CIの成功後にsquash mergeします。macOSのCIで次のコマンドを実行します。自動テストは実モデルへ通信しません。
