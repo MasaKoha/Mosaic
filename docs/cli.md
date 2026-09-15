@@ -157,6 +157,21 @@ mosaic ideas --kind game
 
 ## 1回1問の対話
 
+```mermaid
+flowchart TD
+  Start["企画を作成・保存して質問を返す<br/>（interview start）"] --> Done{"対象範囲の回答が完了したか<br/>（done）"}
+  Next["既存企画の質問を取得する<br/>（interview next）"] --> Done
+  Done -->|未回答あり| Choice{"どう進めるか"}
+  Choice -->|回答を続ける| Answer["回答を保存して次の質問を返す<br/>（interview answer）"]
+  Answer --> Done
+  Choice -->|残りはAI補完として回答済みにする| Finish["未回答だけを空文字で保存する<br/>（interview finish）"]
+  Choice -->|未回答を残して生成する| Generate["モックを生成する<br/>（generate）"]
+  Done -->|完了後に生成する| Generate
+  Finish --> Generate
+```
+
+企画ファイルへ回答を保存しながら対話を進め、未回答を残したまま生成することもできるコマンドの使い分けを示します。
+
 ### start / next
 
 ```sh
