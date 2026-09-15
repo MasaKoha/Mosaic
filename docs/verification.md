@@ -100,6 +100,22 @@
 
 生成したゲームの動作確認は、ゲーム固有のREADMEにある開始・操作・成功・失敗・リトライを確認してください。
 
+```mermaid
+flowchart TD
+  Execution{"CLI実行が正常に完了したか<br/>終了コード0・完了通知・失敗通知なし"}
+  Execution -->|いいえ| Failure["生成完了にせず<br/>ログ・途中の成果物を確認する"]
+  Execution -->|はい| Validation{"必須成果物・企画・<br/>完了レポートの検査に合格したか"}
+  Validation -->|いいえ| Failure
+  Validation -->|はい| Completed["生成完了<br/>動作は未確認"]
+  Completed --> Format{"生成形式は何か"}
+  Format -->|ブラウザ| Browser["モックを開く"]
+  Format -->|Unity・Avalonia| Project["生成物のREADMEに従い<br/>コンパイル・起動する"]
+  Browser --> Operation["READMEの開始・操作・成功・<br/>失敗・再挑戦を確認する"]
+  Project --> Operation
+```
+
+ゲームの新規生成を例に、生成完了の判定と、利用者が別途行う起動・操作確認の流れを示します。
+
 ## 自動テスト
 
 再実行するコマンド:

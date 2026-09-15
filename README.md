@@ -17,6 +17,20 @@
 - ブラウザ（HTML）/ Avaloniaを生成。ゲームとゲーミフィケーションはUnityも選択可能。初期選択はブラウザ。
 - ローカルCodex CLIの `gpt-6-astra` / `model_reasoning_effort="xhigh"` を固定指定。
 
+```mermaid
+flowchart TD
+  Planning["種類・生成形式を選び<br/>決まった企画項目を指定する"] --> Generation["ローカルCodex CLIで<br/>空欄をAI補完し、モックを生成する"]
+  Generation --> Artifacts["モック本体・補完済み企画・<br/>判断理由・完了レポートなど"]
+  Artifacts --> Validation["実行結果と成果物を検査する"]
+  Validation -->|合格| Completed["生成完了として履歴に残す"]
+  Completed --> Play["利用者がモックを起動して試す"]
+  Play --> Feedback["履歴のモックへ感想を入力する"]
+  Feedback --> Refinement["元の種類・形式を固定し<br/>別フォルダのコピーを改善する"]
+  Refinement --> Validation
+```
+
+企画の指定からAI補完・生成・完了検査を経てモックを試し、元の成果物を残した改善版へつなげる流れを示します。
+
 ## 起動
 
 .NET 8以降のSDK、Codex CLI 0.153.2以降、Codex CLIへのログインが必要です。GUIアプリとして起動した場合にCLIが見つからなければ、「Codexの接続設定」で実行ファイルの絶対パスを指定します。
@@ -124,6 +138,17 @@ Windowsでは `.cmd` ラッパーではなく実体の `codex.exe` を指定し�
 ## 構成
 
 MVPとRx.NETを使用します。Viewは入力と描画、Presenterは操作の流れ、Briefは企画、GenerationはCLIと成果物検証、Storageはファイル操作を担当します。入力と操作をObservableへ変換し、購読は画面の寿命で破棄します。シーンやアセットを直接操作するUnity連携はアプリ本体には含みません。
+
+## ターミナル・AI エージェントから使う
+
+第1引数に `cli` を渡すと、GUIを起動せず企画・生成・改善を実行できます。
+AIエージェントは1回1問の `interview next` / `answer`、人間は連続入力の `interview ask` を使います。
+企画JSONはGUIの「企画を開く」でもそのまま読めます。全コマンドは [CLIの使い方](docs/cli.md) を参照してください。
+
+```sh
+dotnet run --project GameMockStudio.csproj -- cli interview start --brief service.json --kind service
+dotnet run --project GameMockStudio.csproj -- cli interview answer --brief service.json --field service_title --value "検証ノート"
+```
 
 ## 開発
 
