@@ -12,7 +12,7 @@
     <PackageReference Include="Avalonia" Version="12.1.2" />
     <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
-    <PackageReference Include="System.Reactive" Version="6.1.0" />
+    <PackageReference Include="System.Reactive" Version="7.0.0" />
     <Compile Remove="tests/**/*.cs" />
     <EmbeddedResource Include="Brief/field-catalog.json" />
     <EmbeddedResource Include="Brief/Planning/*.json" />
