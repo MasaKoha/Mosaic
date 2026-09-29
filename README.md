@@ -15,7 +15,7 @@
 - 「モックの感想」から既存モックをブラッシュアップ。感想の自動保存、元の成果物を残した改善版の生成。
 - 生成指示のプレビュー、Codexの進行ログ、キャンセル、成果物フォルダを開く。
 - ブラウザ（HTML）/ Avaloniaを生成。ゲームとゲーミフィケーションはUnityも選択可能。初期選択はブラウザ。
-- ローカルCodex CLIの `gpt-6-astra` / `model_reasoning_effort="xhigh"` を固定指定。
+- ローカルCodex CLIの `gpt-6.1-sol` / `model_reasoning_effort="xhigh"` を固定指定。
 
 ```mermaid
 flowchart TD
