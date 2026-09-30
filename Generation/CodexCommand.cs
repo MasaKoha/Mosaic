@@ -8,8 +8,8 @@ namespace GameMockStudio.Generation;
 /// <summary>シェル展開を介さず、固定モデルでCodexを起動する。</summary>
 public sealed class CodexCommand
 {
-    /// <summary>ローカルのモデル一覧で確認したGPT-6の識別子。</summary>
-    public const string Model = "gpt-6-astra";
+    /// <summary>生成に使うモデル。gpt-6-astra は 2026-10 から高価になったため gpt-6.1-sol を使う。</summary>
+    public const string Model = "gpt-6.1-sol";
     /// <summary>指定された推論強度。</summary>
     public const string ReasoningEffort = "xhigh";
 
