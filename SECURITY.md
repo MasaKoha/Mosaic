@@ -4,7 +4,7 @@
 
 アプリは、このPCにインストールしたCodex CLIを子プロセスとして起動する。ログインはCLIで行い、アプリは認証ファイルの読み取り・複製・保存を行わない。ChatGPTでのログイン状態は `codex login status` で確認できる。
 
-個人の `config.toml` を読み込まない `--ignore-user-config` を指定する。保存済み認証はCLIが引き続き使用する。モデルは `gpt-6-astra`、推論強度は `xhigh`、プロバイダーは `openai` を明示する。
+個人の `config.toml` を読み込まない `--ignore-user-config` を指定する。保存済み認証はCLIが引き続き使用する。モデルは `gpt-6.1-sol`、推論強度は `xhigh`、プロバイダーは `openai` を明示する。
 
 企画は標準入力で渡し、パスは `ArgumentList` に渡す。`workspace-write` と承認拒否を明示し、生成中のシェルのネットワークアクセスを無効にする。シェルへ引き継ぐ環境変数を基本項目に限定し、KEY・SECRET・TOKENを含む名前の除外も有効にする。モデルへの接続はCLIが行うため、インターネット接続は必要。
 
