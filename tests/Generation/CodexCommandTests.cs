@@ -18,7 +18,7 @@ public sealed class CodexCommandTests
         Assert.False(information.UseShellExecute);
         Assert.True(information.RedirectStandardInput);
         Assert.Contains(directory, information.ArgumentList);
-        Assert.Contains("gpt-6.1-sol", information.ArgumentList);
+        Assert.Contains("gpt-6-astra", information.ArgumentList);
         Assert.Contains("model_reasoning_effort=\"xhigh\"", information.ArgumentList);
         Assert.Contains("--ignore-user-config", information.ArgumentList);
         Assert.Contains("model_provider=\"openai\"", information.ArgumentList);
